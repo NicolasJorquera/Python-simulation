@@ -33,13 +33,13 @@ general = ttk.Frame(inputs)
 general.pack(padx=10, pady=10, fill='x')
 
 
-lleg_label = ttk.Label(inputs, text="Llegadas:")
+lleg_label = ttk.Label(inputs, text="Llegadas (Poisson):")
 lleg_label.pack(fill='x', side=TOP)
 llegadas = ttk.Frame(inputs)
 llegadas.pack(padx=10, pady=10, fill='x')
 
 
-durVis_label = ttk.Label(inputs, text="Duracion visitas:")
+durVis_label = ttk.Label(inputs, text="Duracion visitas (Normal):")
 durVis_label.pack(fill='x', side=TOP)
 duracionVisitas = ttk.Frame(inputs)
 duracionVisitas.pack(padx=10, pady=10, fill='x')
@@ -65,8 +65,8 @@ selectionLlegadas = tk.StringVar()
 meanLlegadas = tk.StringVar()
 
 # distribution selection
-dist_label = ttk.Label(llegadas, text="Distribucion de probabilidad:")
-dist_label.pack(fill='x', side=TOP)
+# dist_label = ttk.Label(llegadas, text="Distribucion de probabilidad:")
+# dist_label.pack(fill='x', side=TOP)
 
 # dist_input = ttk.Combobox(llegadas, textvariable=selectionLlegadas)
 # dist_input['values'] = ["Poisson", "Normal"]
@@ -90,8 +90,8 @@ devVisitas = tk.StringVar()
 
 
 # distribution selection
-dist_label = ttk.Label(duracionVisitas, text="Distribucion de probabilidad:")
-dist_label.pack(fill='x', side=TOP)
+# dist_label = ttk.Label(duracionVisitas, text="Distribucion de probabilidad:")
+# dist_label.pack(fill='x', side=TOP)
 
 # dist_input = ttk.Combobox(duracionVisitas, textvariable=selectionVisitas)
 # dist_input['values'] = ["Poisson", "Normal"]
