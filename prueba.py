@@ -153,8 +153,8 @@ def plotConcurrencia():
 
 
 
-    lenConcurrencia = 450
-    lenCola = 100
+    lenConcurrencia = 20
+    lenCola = 20
 
 
     concurrencia = []
