@@ -1,6 +1,6 @@
 from math import exp
 import tkinter as tk
-from tkinter import BOTTOM, RIGHT, LEFT, TOP, ttk
+from tkinter import BOTTOM, CENTER, RIGHT, LEFT, TOP, ttk
 from tkinter.messagebox import showinfo
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import (FigureCanvasTkAgg, 
@@ -145,25 +145,6 @@ def plotVisita():
     mu = int(meanVisitas.get())
     dev = int(devVisitas.get())
 
-    for segundo in range(int(duracionPrueba.get())):
-        size = random.poisson(lam=int(meanLlegadas.get()), size=1)
-        for visita in range(size[0]):
-            tiempoVisita = np.random.normal( mu, dev, 1)
-            tiempoVisita = truncate(tiempoVisita[0])
-            concurrencia.append(tiempoVisita)
-
-
-        concurrenciaTotal.append(len(concurrencia))
-        
-        offset = 0
-        for visitaIndex in range(0, len(concurrencia)):
-            visitaIndex = visitaIndex - offset
-            if concurrencia[visitaIndex] <= 0:
-                concurrencia.pop(visitaIndex)
-                offset = offset + 1
-            else:
-                concurrencia[visitaIndex] = concurrencia[visitaIndex] - 1
-
     # histograma de distribución normal.
     # visitas, tiempoVisitas, ignorar = plt.hist(datos, 20)
     # plt.ylabel('visitas')
@@ -230,21 +211,7 @@ def plotConcurrencia():
                 concurrencia[visitaIndex] = concurrencia[visitaIndex] - 1
 
         
- 
-    # plt.ylabel('concurrencia')
-    # plt.xlabel('tiempo')
-    # plt.title('Histograma')
-    
-  
-    # # adding the subplot
-    # plot1 = fig.add_subplot(111)
 
-    # tiempo = [*range(int(duracionPrueba.get()))]
-  
-    # # plotting the graph
-    # plt.plot(range(segundo), concurrenciaTotal)
-
-    # plt.show()
 
     return range(segundo), concurrenciaTotal
 
@@ -264,14 +231,9 @@ def plot():
     plt.show()
 
 
-# bind the selected value changes
-def submit():
-    showinfo(
-        title='Result',
-        message=f'You selected {random.poisson(lam=int(meanLlegadas.get()) * int(duracionPrueba.get()), size=1)[0]}'
-    )
 
-button1 = ttk.Button(inputs, text='Visitas', command= plot)
-button1.pack(fill='x', side=LEFT)
+
+button1 = ttk.Button(inputs, text='Graficar', command= plot)
+button1.pack(fill='x')
 
 root.mainloop()
