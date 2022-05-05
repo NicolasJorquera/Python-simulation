@@ -151,9 +151,15 @@ def plotConcurrencia():
     fig = Figure(figsize = (5, 5),
                  dpi = 100)
 
-    lenConcurrencia = 4500
+
+
+    lenConcurrencia = 450
+    lenCola = 100
+
+
     concurrencia = []
     cola = []
+    cola2 = []
     concurrenciaTotal = []
     mu = int(meanVisitas.get())
     dev = int(devVisitas.get())
@@ -162,7 +168,7 @@ def plotConcurrencia():
     while segundo < int(duracionPrueba.get()) or (segundo >= int(duracionPrueba.get()) and cola != []):
         
             
-        segundo= segundo + 1
+        segundo = segundo + 1
 
         if segundo < int(duracionPrueba.get()):
 
@@ -173,7 +179,10 @@ def plotConcurrencia():
                 if len(concurrencia) < lenConcurrencia:
                     concurrencia.append(tiempoVisita)
                 else:
-                    cola.append(tiempoVisita)
+                    if(len(cola) >= lenCola):
+                        cola2.append(tiempoVisita)
+                    else:
+                        cola.append(tiempoVisita)
 
         concurrenciaTotal.append(len(concurrencia))
         
@@ -185,6 +194,9 @@ def plotConcurrencia():
                 if len(cola) > 0 and len(concurrencia)<lenConcurrencia:
                     concurrencia.append(cola[0])
                     cola.pop(0)
+                    if len(cola2) > 0 and len(cola)<lenCola:
+                        cola.append(cola2[0])
+                        cola2.pop(0) 
                 else:
                     offset = offset + 1
             else:
@@ -202,9 +214,6 @@ def plot():
 
 
     fig, axs = plt.subplots(2)
-
-    # plot1 = fig.add_subplot(111)
-    # plot2 = fig.add_subplot(112)
 
     axs[0].hist(datosV, 20)
     axs[1].plot(tiempoC, concurrencia)
