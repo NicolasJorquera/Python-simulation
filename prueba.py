@@ -68,11 +68,11 @@ meanLlegadas = tk.StringVar()
 dist_label = ttk.Label(llegadas, text="Distribucion de probabilidad:")
 dist_label.pack(fill='x', side=TOP)
 
-dist_input = ttk.Combobox(llegadas, textvariable=selectionLlegadas)
-dist_input['values'] = ["Poisson", "Normal"]
-dist_input['state'] = 'readonly'
-dist_input.pack(fill='x', )
-dist_input.focus()
+# dist_input = ttk.Combobox(llegadas, textvariable=selectionLlegadas)
+# dist_input['values'] = ["Poisson", "Normal"]
+# dist_input['state'] = 'readonly'
+# dist_input.pack(fill='x', )
+# dist_input.focus()
 
 
 # mean
@@ -93,11 +93,11 @@ devVisitas = tk.StringVar()
 dist_label = ttk.Label(duracionVisitas, text="Distribucion de probabilidad:")
 dist_label.pack(fill='x', side=TOP)
 
-dist_input = ttk.Combobox(duracionVisitas, textvariable=selectionVisitas)
-dist_input['values'] = ["Poisson", "Normal"]
-dist_input['state'] = 'readonly'
-dist_input.pack(fill='x', )
-dist_input.focus()
+# dist_input = ttk.Combobox(duracionVisitas, textvariable=selectionVisitas)
+# dist_input['values'] = ["Poisson", "Normal"]
+# dist_input['state'] = 'readonly'
+# dist_input.pack(fill='x', )
+# dist_input.focus()
 
 
 # mean
@@ -144,27 +144,7 @@ def plotVisita():
     concurrenciaTotal = []
     mu = int(meanVisitas.get())
     dev = int(devVisitas.get())
-
-    # histograma de distribución normal.
-    # visitas, tiempoVisitas, ignorar = plt.hist(datos, 20)
-    # plt.ylabel('visitas')
-    # plt.xlabel('tiempo de visita')
-    # plt.title('Histograma')
     
-  
-    # # adding the subplot
-    # plot1 = fig.add_subplot(111)
-    # # plot2 = fig.add_subplot(112)
-
-    # tiempo = [*range(int(duracionPrueba.get()))]
-  
-    # # plotting the graph
-    # # plot2.plot(tiempo, concurrenciaTotal)
-  
-    # # plotting the graph
-    # plot1.plot(tiempoVisitas[:-1], visitas)
-
-    # plt.show()
     return datos
 
 def plotConcurrencia():
