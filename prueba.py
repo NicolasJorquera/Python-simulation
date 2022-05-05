@@ -274,7 +274,4 @@ def submit():
 button1 = ttk.Button(inputs, text='Visitas', command= plot)
 button1.pack(fill='x', side=LEFT)
 
-button2 = ttk.Button(inputs, text='Concurrencia', command= plotConcurrencia)
-button2.pack(fill='x', side=RIGHT)
-
 root.mainloop()
