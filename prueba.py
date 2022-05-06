@@ -153,14 +153,16 @@ def plotConcurrencia():
 
 
 
-    lenConcurrencia = 20
-    lenCola = 20
+    lenConcurrencia = 350
+    lenCola = 1000
 
 
     concurrencia = []
     cola = []
     cola2 = []
     concurrenciaTotal = []
+    colaTotal = []
+    cola2Total = []
     mu = int(meanVisitas.get())
     dev = int(devVisitas.get())
 
@@ -185,7 +187,9 @@ def plotConcurrencia():
                         cola.append(tiempoVisita)
 
         concurrenciaTotal.append(len(concurrencia))
-        
+        colaTotal.append(len(cola))
+        cola2Total.append(len(cola2))
+
         offset = 0
         for visitaIndex in range(0, len(concurrencia)):
             visitaIndex = visitaIndex - offset
@@ -205,18 +209,22 @@ def plotConcurrencia():
         
 
 
-    return range(segundo), concurrenciaTotal
+    return range(segundo), concurrenciaTotal, colaTotal, cola2Total
 
 
 def plot():
     datosV = plotVisita()
-    tiempoC, concurrencia = plotConcurrencia()
+    tiempoC, concurrencia, cola, cola2 = plotConcurrencia()
 
 
     fig, axs = plt.subplots(2)
 
     axs[0].hist(datosV, 20)
+    axs[0].set(xlabel='Duracion Visitas', ylabel='Visitas')
     axs[1].plot(tiempoC, concurrencia)
+    axs[1].plot(tiempoC, cola)
+    axs[1].plot(tiempoC, cola2)
+    axs[1].set(xlabel='Tiempo', ylabel='Concurrencia(Azul)/Cola(Naranjo)')
     plt.show()
 
 
