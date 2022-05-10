@@ -222,7 +222,7 @@ def plotConcurrencia():
                 else:
                     offset = offset + 1
             else:
-                concurrencia[visitaIndex] = concurrencia[visitaIndex] - 1
+                concurrencia[visitaIndex]["tiempoVisita"] = concurrencia[visitaIndex]["tiempoVisita"] - 1
 
         
         tiempoRespuesta.append(mediaTiempoRespuestaData[0]/mediaTiempoRespuestaData[1])
