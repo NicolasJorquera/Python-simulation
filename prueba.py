@@ -224,8 +224,10 @@ def plotConcurrencia():
             else:
                 concurrencia[visitaIndex]["tiempoVisita"] = concurrencia[visitaIndex]["tiempoVisita"] - 1
 
-        
-        tiempoRespuesta.append(mediaTiempoRespuestaData[0]/mediaTiempoRespuestaData[1])
+        if mediaTiempoRespuestaData[1] != 0:
+            tiempoRespuesta.append(mediaTiempoRespuestaData[0]/mediaTiempoRespuestaData[1])
+        else:
+            tiempoRespuesta.append(0)
 
     return range(segundo), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta
 
