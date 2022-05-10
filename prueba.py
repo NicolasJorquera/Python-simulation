@@ -237,15 +237,16 @@ def plot():
     tiempoC, concurrencia, cola, cola2, tiempoRespuesta = plotConcurrencia()
 
 
-    fig, axs = plt.subplots(2)
+    fig, axs = plt.subplots(3)
 
     axs[0].hist(datosV, 20)
     axs[0].set(xlabel='Duracion Visitas', ylabel='Visitas')
     axs[1].plot(tiempoC, concurrencia)
     axs[1].plot(tiempoC, cola)
     axs[1].plot(tiempoC, cola2)
-    axs[1].plot(tiempoC, tiempoRespuesta)
     axs[1].set(xlabel='Tiempo', ylabel='Concurrencia(Azul)/Cola(Naranjo)')
+    axs[2].plot(tiempoC, tiempoRespuesta)
+    axs[2].set(xlabel='Tiempo', ylabel='Tiempo de respuesta')
     plt.show()
 
 
