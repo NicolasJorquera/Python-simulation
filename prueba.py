@@ -156,13 +156,13 @@ def plotConcurrencia():
     lenConcurrencia = 350
     lenCola = 1000
 
-
     concurrencia = []
     cola = []
     cola2 = []
     concurrenciaTotal = []
     colaTotal = []
     cola2Total = []
+    tiempoRespuesta = []
     mu = int(meanVisitas.get())
     dev = int(devVisitas.get())
 
@@ -178,23 +178,41 @@ def plotConcurrencia():
             for visita in range(size[0]):
                 tiempoVisita = np.random.normal( mu, dev, 1)
                 tiempoVisita = truncate(tiempoVisita[0])
+                dictConcurrencia = {
+                    "tiempoVisita": tiempoVisita,
+                    "tiempoRespuesta": 0 #Esto incluye los tiempos de espera
+                }
                 if len(concurrencia) < lenConcurrencia:
-                    concurrencia.append(tiempoVisita)
+                    concurrencia.append(dictConcurrencia)
                 else:
                     if(len(cola) >= lenCola):
-                        cola2.append(tiempoVisita)
+                        cola2.append(dictConcurrencia)
                     else:
-                        cola.append(tiempoVisita)
+                        cola.append(dictConcurrencia)
 
         concurrenciaTotal.append(len(concurrencia))
         colaTotal.append(len(cola))
         cola2Total.append(len(cola2))
 
+        mediaTiempoRespuestaData = [0, 0]
+
+
+        for colaIndex in range(0, len(cola)):
+            cola[colaIndex]["tiempoRespuesta"] = cola[colaIndex]["tiempoRespuesta"] + 1
+
+        for cola2Index in range(0, len(cola2)):
+            cola2[cola2Index]["tiempoRespuesta"] = cola2[cola2Index]["tiempoRespuesta"] + 1
+
+
         offset = 0
         for visitaIndex in range(0, len(concurrencia)):
             visitaIndex = visitaIndex - offset
-            if int(concurrencia[visitaIndex]) <= 0:
+            concurrencia[visitaIndex]["tiempoRespuesta"] = concurrencia[visitaIndex]["tiempoRespuesta"] + 1
+            if int(concurrencia[visitaIndex]["tiempoVisita"]) <= 0:
+                mediaTiempoRespuestaData[0] = mediaTiempoRespuestaData[0] + int(concurrencia[visitaIndex]["tiempoRespuesta"])
+                mediaTiempoRespuestaData[1] = mediaTiempoRespuestaData[1] + 1
                 concurrencia.pop(visitaIndex)
+
                 if len(cola) > 0 and len(concurrencia)<lenConcurrencia:
                     concurrencia.append(cola[0])
                     cola.pop(0)
@@ -207,14 +225,14 @@ def plotConcurrencia():
                 concurrencia[visitaIndex] = concurrencia[visitaIndex] - 1
 
         
+        tiempoRespuesta.append(mediaTiempoRespuestaData[0]/mediaTiempoRespuestaData[1])
 
-
-    return range(segundo), concurrenciaTotal, colaTotal, cola2Total
+    return range(segundo), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta
 
 
 def plot():
     datosV = plotVisita()
-    tiempoC, concurrencia, cola, cola2 = plotConcurrencia()
+    tiempoC, concurrencia, cola, cola2, tiempoRespuesta = plotConcurrencia()
 
 
     fig, axs = plt.subplots(2)
@@ -224,6 +242,7 @@ def plot():
     axs[1].plot(tiempoC, concurrencia)
     axs[1].plot(tiempoC, cola)
     axs[1].plot(tiempoC, cola2)
+    axs[1].plot(tiempoC, tiempoRespuesta)
     axs[1].set(xlabel='Tiempo', ylabel='Concurrencia(Azul)/Cola(Naranjo)')
     plt.show()
 
