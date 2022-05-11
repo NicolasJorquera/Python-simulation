@@ -48,13 +48,26 @@ duracionVisitas.pack(padx=10, pady=10, fill='x')
 
 
 duracionPrueba = tk.StringVar()
+limiteConcurrencia = tk.StringVar()
+limiteCola = tk.StringVar()
 
 duracion_label = ttk.Label(general, text="Duracion de prueba:")
 duracion_label.pack(fill='x', )
-
 duracion_entry = ttk.Entry(general, textvariable=duracionPrueba)
 duracion_entry.pack(fill='x')
 duracion_entry.focus()
+
+limConcurrencia_label = ttk.Label(general, text="Limite de concurrencia:")
+limConcurrencia_label.pack(fill='x', )
+limConcurrencia_entry = ttk.Entry(general, textvariable=limiteConcurrencia)
+limConcurrencia_entry.pack(fill='x')
+limConcurrencia_entry.focus()
+
+limCola_label = ttk.Label(general, text="Limite de cola:")
+limCola_label.pack(fill='x', )
+limCola_entry = ttk.Entry(general, textvariable=limiteCola)
+limCola_entry.pack(fill='x')
+limCola_entry.focus()
 
 
 
@@ -153,8 +166,8 @@ def plotConcurrencia():
 
 
 
-    lenConcurrencia = 350
-    lenCola = 1000
+    lenConcurrencia = 40
+    lenCola = 60
 
     concurrencia = []
     cola = []
@@ -182,10 +195,10 @@ def plotConcurrencia():
                     "tiempoVisita": tiempoVisita,
                     "tiempoRespuesta": 0 #Esto incluye los tiempos de espera
                 }
-                if len(concurrencia) < lenConcurrencia:
+                if len(concurrencia) < int(limiteConcurrencia.get()):
                     concurrencia.append(dictConcurrencia)
                 else:
-                    if(len(cola) >= lenCola):
+                    if(len(cola) >= int(limiteCola.get())):
                         cola2.append(dictConcurrencia)
                     else:
                         cola.append(dictConcurrencia)
@@ -213,11 +226,11 @@ def plotConcurrencia():
                 mediaTiempoRespuestaData[1] = mediaTiempoRespuestaData[1] + 1
                 concurrencia.pop(visitaIndex)
 
-                if len(cola) > 0 and len(concurrencia)<lenConcurrencia:
+                if len(cola) > 0 and len(concurrencia) < int(limiteConcurrencia.get()):
                     concurrencia.append(cola[0])
                     cola.pop(0)
-                    if len(cola2) > 0 and len(cola)<lenCola:
-                        cola.append(cola2[0])
+                    if len(cola2) > 0 and len(cola) < int(limiteCola.get()):
+                        #cola.append(cola2[0])
                         cola2.pop(0) 
                 else:
                     offset = offset + 1
@@ -227,7 +240,10 @@ def plotConcurrencia():
         if mediaTiempoRespuestaData[1] != 0:
             tiempoRespuesta.append(mediaTiempoRespuestaData[0]/mediaTiempoRespuestaData[1])
         else:
-            tiempoRespuesta.append(0)
+            if len(tiempoRespuesta) != 0:
+                tiempoRespuesta.append(tiempoRespuesta[-1])
+            else:
+                tiempoRespuesta.append(0)
 
     return range(segundo), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta
 
