@@ -151,12 +151,6 @@ def plotVisita():
     size = random.poisson(lam=int(meanLlegadas.get()) * int(duracionPrueba.get()), size=1)
   
     datos = np.random.normal( mu, dev, size) #creando muestra de datos
-
-
-    concurrencia = []
-    concurrenciaTotal = []
-    mu = int(meanVisitas.get())
-    dev = int(devVisitas.get())
     
     return datos
 
@@ -253,16 +247,16 @@ def plot():
     tiempoC, concurrencia, cola, cola2, tiempoRespuesta = plotConcurrencia()
 
 
-    fig, axs = plt.subplots(3)
+    fig, (axs1, axs2) = plt.subplots(2,2)
 
-    axs[0].hist(datosV, 20)
-    axs[0].set(xlabel='Duracion Visitas', ylabel='Visitas')
-    axs[1].plot(tiempoC, concurrencia)
-    axs[1].plot(tiempoC, cola)
-    axs[1].plot(tiempoC, cola2)
-    axs[1].set(xlabel='Tiempo', ylabel='Concurrencia(Azul)/Cola(Naranjo)')
-    axs[2].plot(tiempoC, tiempoRespuesta)
-    axs[2].set(xlabel='Tiempo', ylabel='Tiempo de respuesta')
+    axs1[0].hist(datosV, 20)
+    axs1[0].set(xlabel='Duracion Visitas', ylabel='Visitas')
+    axs1[1].plot(tiempoC, concurrencia)
+    axs1[1].plot(tiempoC, cola)
+    axs1[1].plot(tiempoC, cola2)
+    axs1[1].set(xlabel='Tiempo', ylabel='Concurrencia(Azul)/Cola(Naranjo)')
+    axs2[0].plot(tiempoC, tiempoRespuesta)
+    axs2[0].set(xlabel='Tiempo', ylabel='Tiempo de respuesta')
     plt.show()
 
 
