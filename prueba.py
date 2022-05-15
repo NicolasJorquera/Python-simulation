@@ -191,7 +191,7 @@ def plotConcurrencia():
             size = random.poisson(lam=int(meanLlegadas.get()), size=1)
             while size < 0:
                 size = random.poisson(lam=int(meanLlegadas.get()), size=1)
-            poissonData.append(size)
+            poissonData.append(size[0])
             for visita in range(size[0]):
                 tiempoVisita = np.random.normal( mu, dev, 1)
                 tiempoVisita = truncate(tiempoVisita[0])
