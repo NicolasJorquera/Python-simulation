@@ -139,6 +139,12 @@ def poissonDist(k, lamb):
     return (temp/fact)
 
 
+def greatestInt(array):
+    greatest = -1
+    for value in range(0, len(array))
+        if value > greatest:
+            greatest = value
+    return greatest        
 
 def plotVisita():
   
@@ -170,6 +176,7 @@ def plotConcurrencia():
     colaTotal = []
     cola2Total = []
     tiempoRespuesta = []
+    poissonData = []
     mu = int(meanVisitas.get())
     dev = int(devVisitas.get())
 
@@ -182,6 +189,9 @@ def plotConcurrencia():
         if segundo < int(duracionPrueba.get()):
 
             size = random.poisson(lam=int(meanLlegadas.get()), size=1)
+            while size < 0:
+                size = random.poisson(lam=int(meanLlegadas.get()), size=1)
+            poissonData.append(size)
             for visita in range(size[0]):
                 tiempoVisita = np.random.normal( mu, dev, 1)
                 tiempoVisita = truncate(tiempoVisita[0])
@@ -238,13 +248,20 @@ def plotConcurrencia():
                 tiempoRespuesta.append(tiempoRespuesta[-1])
             else:
                 tiempoRespuesta.append(0)
+    
+    if len(poissonData) > 0:
+        arriveX = greatestInt(poissonData)
+        arriveY = [0] * arriveX
+        for arrivals in range(0, len(poissonData))
+            arriveY[arrivals] = arriveY[arrivals] + 1
 
-    return range(segundo), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta
+
+    return range(segundo), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta, range(arriveX), arriveY
 
 
 def plot():
     datosV = plotVisita()
-    tiempoC, concurrencia, cola, cola2, tiempoRespuesta = plotConcurrencia()
+    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas = plotConcurrencia()
 
 
     fig, (axs1, axs2) = plt.subplots(2,2)
@@ -257,6 +274,8 @@ def plot():
     axs1[1].set(xlabel='Tiempo', ylabel='Concurrencia(Azul)/Cola(Naranjo)')
     axs2[0].plot(tiempoC, tiempoRespuesta)
     axs2[0].set(xlabel='Tiempo', ylabel='Tiempo de respuesta')
+    axs2[1].plot(visitas, frecVisitas)
+    axs2[1].set(xlabel='Visitas', ylabel='Frecuencia')
     plt.show()
 
 
