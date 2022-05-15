@@ -141,7 +141,7 @@ def poissonDist(k, lamb):
 
 def greatestInt(array):
     greatest = -1
-    for value in range(0, len(array))
+    for value in range(0, len(array)):
         if value > greatest:
             greatest = value
     return greatest        
@@ -252,7 +252,7 @@ def plotConcurrencia():
     if len(poissonData) > 0:
         arriveX = greatestInt(poissonData)
         arriveY = [0] * arriveX
-        for arrivals in range(0, len(poissonData))
+        for arrivals in range(0, len(poissonData)):
             arriveY[arrivals] = arriveY[arrivals] + 1
 
 
