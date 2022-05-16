@@ -253,8 +253,12 @@ def plotConcurrencia():
     if len(poissonData) > 0:
         arriveX = greatestInt(poissonData)
         arriveY = [0] * arriveX
-        for arrivals in range(0, len(poissonData)):
-            arriveY[arrivals] = arriveY[arrivals] + 1
+        for arrivalsIndex in range(0, len(poissonData)):
+            arrivals = poissonData[arrivalsIndex]
+            arriveY[arrivals-1] = arriveY[arrivals-1] + 1
+        
+        for item in range(0, len(arriveY)):
+            arriveY[item] = (arriveY[item]/len(poissonData))*100
 
 
     return range(segundo), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta, range(arriveX), arriveY
@@ -276,6 +280,7 @@ def plot():
     axs2[0].plot(tiempoC, tiempoRespuesta)
     axs2[0].set(xlabel='Tiempo', ylabel='Tiempo de respuesta')
     axs2[1].plot(visitas, frecVisitas)
+    axs2[1].axis([0, len(visitas), 0, 100])
     axs2[1].set(xlabel='Visitas', ylabel='Frecuencia')
     plt.show()
 
