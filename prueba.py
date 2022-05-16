@@ -141,7 +141,8 @@ def poissonDist(k, lamb):
 
 def greatestInt(array):
     greatest = -1
-    for value in range(0, len(array)):
+    for index in range(0, len(array)):
+        value = array[index]
         if value > greatest:
             greatest = value
     return greatest        
