@@ -47,10 +47,10 @@ duracionVisitas.pack(padx=10, pady=10, fill='x')
 
 
 
-duracionPrueba = tk.StringVar()
-limiteConcurrencia = tk.StringVar()
-limiteCola = tk.StringVar()
-rendStep = tk.StringVar()
+duracionPrueba = tk.StringVar(value="3600")
+limiteConcurrencia = tk.StringVar(value="450")
+limiteCola = tk.StringVar(value="200")
+rendStep = tk.StringVar(value="5")
 
 duracion_label = ttk.Label(general, text="Duracion de prueba:")
 duracion_label.pack(fill='x', )
@@ -70,7 +70,7 @@ limCola_entry = ttk.Entry(general, textvariable=limiteCola)
 limCola_entry.pack(fill='x')
 limCola_entry.focus()
 
-rendStep_label = ttk.Label(general, text="Step rendimiento:")
+rendStep_label = ttk.Label(general, text="Step rendimiento (min):")
 rendStep_label.pack(fill='x', )
 rendStep_entry = ttk.Entry(general, textvariable=rendStep)
 rendStep_entry.pack(fill='x')
@@ -82,7 +82,7 @@ rendStep_entry.focus()
 # store mean address and dev
 
 selectionLlegadas = tk.StringVar()
-meanLlegadas = tk.StringVar()
+meanLlegadas = tk.StringVar(value="6")
 
 # distribution selection
 # dist_label = ttk.Label(llegadas, text="Distribucion de probabilidad:")
@@ -105,8 +105,8 @@ mean_entry.focus()
 
 # store mean address and dev
 selectionVisitas = tk.StringVar()
-meanVisitas = tk.StringVar()
-devVisitas = tk.StringVar()
+meanVisitas = tk.StringVar(value="60")
+devVisitas = tk.StringVar(value="7")
 
 
 # distribution selection
@@ -337,7 +337,11 @@ def plot():
     tiempoN, llegadasN, finalizadasN = rendimiento(tiempoC, poissonData, visitasFinalizadas)
     axs3[1].bar(tiempoN, llegadasN, width=250)
     axs3[1].bar(tiempoN, finalizadasN, width=250)
-    ##axs3[1].plot(tiempoC, dif, color = 'green')
+    diff = []
+    for i in range(len(tiempoN)):
+        diff.append(llegadasN[i]-finalizadasN[i])
+     
+    axs3[1].plot(tiempoN, diff, color = 'green')
     
     plt.show()
 
