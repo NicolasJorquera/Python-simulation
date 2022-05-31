@@ -16,7 +16,7 @@ def truncate(n, decimals=0):
 
 # root window
 root = tk.Tk()
-root.geometry("200x400")
+root.geometry("200x500")
 root.resizable(False, False)
 root.title('Simulador distribucion')
 
@@ -50,6 +50,7 @@ duracionVisitas.pack(padx=10, pady=10, fill='x')
 duracionPrueba = tk.StringVar()
 limiteConcurrencia = tk.StringVar()
 limiteCola = tk.StringVar()
+rendStep = tk.StringVar()
 
 duracion_label = ttk.Label(general, text="Duracion de prueba:")
 duracion_label.pack(fill='x', )
@@ -68,6 +69,12 @@ limCola_label.pack(fill='x', )
 limCola_entry = ttk.Entry(general, textvariable=limiteCola)
 limCola_entry.pack(fill='x')
 limCola_entry.focus()
+
+rendStep_label = ttk.Label(general, text="Step rendimiento:")
+rendStep_label.pack(fill='x', )
+rendStep_entry = ttk.Entry(general, textvariable=rendStep)
+rendStep_entry.pack(fill='x')
+rendStep_entry.focus()
 
 
 
@@ -178,14 +185,15 @@ def plotConcurrencia():
     cola2Total = []
     tiempoRespuesta = []
     poissonData = []
+    visitasFinalizadas = []
     mu = int(meanVisitas.get())
     dev = int(devVisitas.get())
 
     segundo = 0
-    while segundo < int(duracionPrueba.get()) or (segundo >= int(duracionPrueba.get()) and cola != []):
-        
-            
-        segundo = segundo + 1
+    size = random.poisson(lam=int(meanLlegadas.get()), size=1)
+    while size < 0:
+        size = random.poisson(lam=int(meanLlegadas.get()), size=1)
+    while segundo < int(duracionPrueba.get()) or (segundo >= int(duracionPrueba.get()) and (cola != [] or concurrencia != [])):
 
         if segundo < int(duracionPrueba.get()):
 
@@ -223,13 +231,18 @@ def plotConcurrencia():
 
 
         offset = 0
+        vf = 0
         for visitaIndex in range(0, len(concurrencia)):
             visitaIndex = visitaIndex - offset
             concurrencia[visitaIndex]["tiempoRespuesta"] = concurrencia[visitaIndex]["tiempoRespuesta"] + 1
             if int(concurrencia[visitaIndex]["tiempoVisita"]) <= 0:
                 mediaTiempoRespuestaData[0] = mediaTiempoRespuestaData[0] + int(concurrencia[visitaIndex]["tiempoRespuesta"])
                 mediaTiempoRespuestaData[1] = mediaTiempoRespuestaData[1] + 1
+
+                
+                vf = vf + 1
                 concurrencia.pop(visitaIndex)
+
 
                 if len(cola) > 0 and len(concurrencia) < int(limiteConcurrencia.get()):
                     concurrencia.append(cola[0])
@@ -241,6 +254,8 @@ def plotConcurrencia():
                     offset = offset + 1
             else:
                 concurrencia[visitaIndex]["tiempoVisita"] = concurrencia[visitaIndex]["tiempoVisita"] - 1
+        
+        visitasFinalizadas.append(vf) 
 
         if mediaTiempoRespuestaData[1] != 0:
             tiempoRespuesta.append(mediaTiempoRespuestaData[0]/mediaTiempoRespuestaData[1])
@@ -249,29 +264,62 @@ def plotConcurrencia():
                 tiempoRespuesta.append(tiempoRespuesta[-1])
             else:
                 tiempoRespuesta.append(0)
+        
+        segundo = segundo + 1
     
     if len(poissonData) > 0:
         arriveX = greatestInt(poissonData)
-        arriveY = [0] * arriveX
+        arriveY = [0] * (arriveX + 1)
         for arrivalsIndex in range(0, len(poissonData)):
             arrivals = poissonData[arrivalsIndex]
-            arriveY[arrivals-1] = arriveY[arrivals-1] + 1
+            arriveY[arrivals] = arriveY[arrivals] + 1
         
         for item in range(0, len(arriveY)):
-            arriveY[item] = (arriveY[item]/len(poissonData))*100
+            arriveY[item] = (float(arriveY[item])/float(len(poissonData)))
 
 
-    return range(segundo), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta, range(arriveX), arriveY
+    return range(segundo), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta, range(arriveX + 1), arriveY, poissonData, visitasFinalizadas
+
+
+def rendimiento(tiempo, llegadas, finalizadas):
+    tiempoNuevo = []
+    llegadasNuevo = []
+    finalizadasNuevo = []
+    for segundo in tiempo:
+        if segundo == 0:
+            tiempoNuevo.append(segundo)
+            llegadasNuevo.append(llegadas[segundo])
+            finalizadasNuevo.append(finalizadas[segundo])
+        else:
+            if segundo >= len(llegadas):
+                llegadas.append(0)
+
+            if (segundo) % int(rendStep.get())*60 == 0:
+                tiempoNuevo.append(segundo)
+                llegadasNuevo.append(llegadas[segundo])
+                finalizadasNuevo.append(finalizadas[segundo])
+            else:
+                llegadasNuevo[-1] = llegadasNuevo[-1] + llegadas[segundo] 
+                finalizadasNuevo[-1] = finalizadasNuevo[-1] + finalizadas[segundo] 
+    
+    return tiempoNuevo, llegadasNuevo, finalizadasNuevo
 
 
 def plot():
     datosV = plotVisita()
-    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas = plotConcurrencia()
+    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas, poissonData, visitasFinalizadas = plotConcurrencia()
+
+    tiempoRespuesta2 = []
+    for item in tiempoRespuesta:
+        if item > 0:
+            tiempoRespuesta2.append(item)
 
 
-    fig, (axs1, axs2) = plt.subplots(2,2)
+    fig, (axs1, axs2, axs3) = plt.subplots(3,2)
 
-    axs1[0].hist(datosV, 20)
+    bins = int(max(tiempoRespuesta2)-min(tiempoRespuesta2))
+
+    axs1[0].hist(tiempoRespuesta2, bins)
     axs1[0].set(xlabel='Duracion Visitas', ylabel='Visitas')
     axs1[1].plot(tiempoC, concurrencia)
     axs1[1].plot(tiempoC, cola)
@@ -279,9 +327,18 @@ def plot():
     axs1[1].set(xlabel='Tiempo', ylabel='Concurrencia(Azul)/Cola(Naranjo)')
     axs2[0].plot(tiempoC, tiempoRespuesta)
     axs2[0].set(xlabel='Tiempo', ylabel='Tiempo de respuesta')
-    axs2[1].plot(visitas, frecVisitas)
-    axs2[1].axis([0, len(visitas), 0, 100])
+    axs2[1].hist(poissonData, int(round(len(visitas)*0.9, 0)), density=True)
+    axs2[1].plot(visitas, frecVisitas, '--')
+    axs2[1].axis([0,len(visitas),0,1])
     axs2[1].set(xlabel='Visitas', ylabel='Frecuencia')
+    axs3[0].plot(range(int(duracionPrueba.get())), poissonData)
+    axs3[0].set(xlabel='Tiempo', ylabel='Llegadas')
+
+    tiempoN, llegadasN, finalizadasN = rendimiento(tiempoC, poissonData, visitasFinalizadas)
+    axs3[1].bar(tiempoN, llegadasN, width=250)
+    axs3[1].bar(tiempoN, finalizadasN, width=250)
+    ##axs3[1].plot(tiempoC, dif, color = 'green')
+    
     plt.show()
 
 
