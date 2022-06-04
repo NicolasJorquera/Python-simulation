@@ -83,6 +83,7 @@ rendStep_entry.focus()
 
 selectionLlegadas = tk.StringVar()
 meanLlegadas = tk.StringVar(value="6")
+meanLlegadas2 = tk.StringVar(value="6")
 
 # distribution selection
 # dist_label = ttk.Label(llegadas, text="Distribucion de probabilidad:")
@@ -96,12 +97,16 @@ meanLlegadas = tk.StringVar(value="6")
 
 
 # mean
-mean_label = ttk.Label(llegadas, text="Promedio de llegadas por segundo:")
+mean_label = ttk.Label(llegadas, text="Llegadas por segundo:")
 mean_label.pack(fill='x', )
 
 mean_entry = ttk.Entry(llegadas, textvariable=meanLlegadas)
 mean_entry.pack(fill='x')
 mean_entry.focus()
+
+mean_entry2 = ttk.Entry(llegadas, textvariable=meanLlegadas2)
+mean_entry2.pack(fill='x')
+mean_entry2.focus()
 
 # store mean address and dev
 selectionVisitas = tk.StringVar()
