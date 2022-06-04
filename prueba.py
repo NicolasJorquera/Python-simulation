@@ -101,11 +101,11 @@ mean_label = ttk.Label(llegadas, text="Llegadas por segundo:")
 mean_label.pack(fill='x', )
 
 mean_entry = ttk.Entry(llegadas, textvariable=meanLlegadas)
-mean_entry.pack(fill='x')
+mean_entry.pack(fill='y')
 mean_entry.focus()
 
 mean_entry2 = ttk.Entry(llegadas, textvariable=meanLlegadas2)
-mean_entry2.pack(fill='x')
+mean_entry2.pack(fill='y')
 mean_entry2.focus()
 
 # store mean address and dev
