@@ -294,7 +294,8 @@ def rendimiento(tiempo, llegadas, finalizadas):
             if segundo >= len(llegadas):
                 llegadas.append(0)
 
-            if (segundo) % int(rendStep.get())*60 == 0:
+            step = int(rendStep.get())*60
+            if (segundo) % step == 0:
                 tiempoNuevo.append(segundo)
                 llegadasNuevo.append(llegadas[segundo])
                 finalizadasNuevo.append(finalizadas[segundo])
@@ -334,14 +335,20 @@ def plot():
     axs3[0].plot(range(int(duracionPrueba.get())), poissonData)
     axs3[0].set(xlabel='Tiempo', ylabel='Llegadas')
 
+
+    axs3prima = axs3[1].twinx()
     tiempoN, llegadasN, finalizadasN = rendimiento(tiempoC, poissonData, visitasFinalizadas)
-    axs3[1].bar(tiempoN, llegadasN, width=250)
-    axs3[1].bar(tiempoN, finalizadasN, width=250)
+    axs3[1].bar(tiempoN, llegadasN, width=int(rendStep.get())*50)
+    axs3[1].bar(tiempoN, finalizadasN, width=int(rendStep.get())*50)
     diff = []
     for i in range(len(tiempoN)):
-        diff.append(llegadasN[i]-finalizadasN[i])
+        if llegadasN[i] == 0:
+            diff.append(100);
+        else:
+            diff.append(100*finalizadasN[i]/llegadasN[i])
      
-    axs3[1].plot(tiempoN, diff, color = 'green')
+    axs3prima.plot(tiempoN, diff, color = 'purple')
+    axs3prima.axis([-int(rendStep.get())*50,tiempoN[-1]+int(rendStep.get())*50,0,110])
     
     plt.show()
 
