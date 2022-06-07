@@ -8,7 +8,7 @@ NavigationToolbar2Tk)
 import matplotlib.pyplot as plt
 import numpy as np 
 
-from numpy import random
+from numpy import pad, random
 
 def truncate(n, decimals=0):
     multiplier = 10 ** decimals
@@ -16,7 +16,7 @@ def truncate(n, decimals=0):
 
 # root window
 root = tk.Tk()
-root.geometry("200x500")
+root.geometry("210x500")
 root.resizable(False, False)
 root.title('Simulador distribucion')
 
@@ -82,8 +82,13 @@ rendStep_entry.focus()
 # store mean address and dev
 
 selectionLlegadas = tk.StringVar()
-meanLlegadas = tk.StringVar(value="6")
+meanLlegadas1 = tk.StringVar(value="4")
 meanLlegadas2 = tk.StringVar(value="6")
+meanLlegadas3 = tk.StringVar(value="8")
+meanLlegadas4 = tk.StringVar(value="10")
+meanLlegadas5 = tk.StringVar(value="12")
+meanLlegadas6 = tk.StringVar(value="14")
+meanLlegadas7 = tk.StringVar(value="16")
 
 # distribution selection
 # dist_label = ttk.Label(llegadas, text="Distribucion de probabilidad:")
@@ -100,14 +105,33 @@ meanLlegadas2 = tk.StringVar(value="6")
 mean_label = ttk.Label(llegadas, text="Llegadas por segundo:")
 mean_label.pack(fill='x', )
 
-mean_entry = ttk.Entry(llegadas, textvariable=meanLlegadas)
-mean_entry.pack(fill='y')
-mean_entry.focus()
+mean_entry1 = ttk.Entry(llegadas, textvariable=meanLlegadas1, width=2)
+mean_entry1.pack(side="left", padx=1)
+mean_entry1.focus()
 
-mean_entry2 = ttk.Entry(llegadas, textvariable=meanLlegadas2)
-mean_entry2.pack(fill='y')
+mean_entry2 = ttk.Entry(llegadas, textvariable=meanLlegadas2, width=2)
+mean_entry2.pack(side="left", padx=1)
 mean_entry2.focus()
 
+mean_entry3 = ttk.Entry(llegadas, textvariable=meanLlegadas3, width=2)
+mean_entry3.pack(side="left", padx=1)
+mean_entry3.focus()
+
+mean_entry4 = ttk.Entry(llegadas, textvariable=meanLlegadas4, width=2)
+mean_entry4.pack(side="left", padx=1)
+mean_entry4.focus()
+
+mean_entry5 = ttk.Entry(llegadas, textvariable=meanLlegadas5, width=2)
+mean_entry5.pack(side="left", padx=1)
+mean_entry5.focus()
+
+mean_entry6 = ttk.Entry(llegadas, textvariable=meanLlegadas6, width=2)
+mean_entry6.pack(side="left", padx=1)
+mean_entry6.focus()
+
+mean_entry7 = ttk.Entry(llegadas, textvariable=meanLlegadas7, width=2)
+mean_entry7.pack(side="left", padx=1)
+mean_entry7.focus()
 # store mean address and dev
 selectionVisitas = tk.StringVar()
 meanVisitas = tk.StringVar(value="60")
@@ -159,28 +183,8 @@ def greatestInt(array):
             greatest = value
     return greatest        
 
-def plotVisita():
-  
-    # the figure that will contain the plot
-    fig = Figure(figsize = (5, 5),
-                 dpi = 100)
-
-    mu = int(meanVisitas.get())
-    dev = int(devVisitas.get())
-    size = random.poisson(lam=int(meanLlegadas.get()) * int(duracionPrueba.get()), size=1)
-  
-    datos = np.random.normal( mu, dev, size) #creando muestra de datos
-    
-    return datos
-
 def plotConcurrencia():
-    fig = Figure(figsize = (5, 5),
-                 dpi = 100)
 
-
-
-    lenConcurrencia = 40
-    lenCola = 60
 
     concurrencia = []
     cola = []
@@ -194,83 +198,109 @@ def plotConcurrencia():
     mu = int(meanVisitas.get())
     dev = int(devVisitas.get())
 
-    segundo = 0
-    size = random.poisson(lam=int(meanLlegadas.get()), size=1)
-    while size < 0:
-        size = random.poisson(lam=int(meanLlegadas.get()), size=1)
-    while segundo < int(duracionPrueba.get()) or (segundo >= int(duracionPrueba.get()) and (cola != [] or concurrencia != [])):
+    stepCount = 0
+    steps = []
+    steps = [meanLlegadas1.get(), meanLlegadas2.get(), meanLlegadas3.get(), meanLlegadas4.get(), meanLlegadas5.get(), meanLlegadas6.get(), meanLlegadas7.get()]
+    for step in steps:
+        if step == "":
+            break
+        stepCount = stepCount + 1
 
-        if segundo < int(duracionPrueba.get()):
-
-            size = random.poisson(lam=int(meanLlegadas.get()), size=1)
-            while size < 0:
-                size = random.poisson(lam=int(meanLlegadas.get()), size=1)
-            poissonData.append(size[0])
-            for visita in range(size[0]):
-                tiempoVisita = np.random.normal( mu, dev, 1)
-                tiempoVisita = truncate(tiempoVisita[0])
-                dictConcurrencia = {
-                    "tiempoVisita": tiempoVisita,
-                    "tiempoRespuesta": 0 #Esto incluye los tiempos de espera
-                }
-                if len(concurrencia) < int(limiteConcurrencia.get()):
-                    concurrencia.append(dictConcurrencia)
-                else:
-                    if(len(cola) >= int(limiteCola.get())):
-                        cola2.append(dictConcurrencia)
-                    else:
-                        cola.append(dictConcurrencia)
-
-        concurrenciaTotal.append(len(concurrencia))
-        colaTotal.append(len(cola))
-        cola2Total.append(len(cola2))
-
-        mediaTiempoRespuestaData = [0, 0]
-
-
-        for colaIndex in range(0, len(cola)):
-            cola[colaIndex]["tiempoRespuesta"] = cola[colaIndex]["tiempoRespuesta"] + 1
-
-        for cola2Index in range(0, len(cola2)):
-            cola2[cola2Index]["tiempoRespuesta"] = cola2[cola2Index]["tiempoRespuesta"] + 1
-
-
-        offset = 0
-        vf = 0
-        for visitaIndex in range(0, len(concurrencia)):
-            visitaIndex = visitaIndex - offset
-            concurrencia[visitaIndex]["tiempoRespuesta"] = concurrencia[visitaIndex]["tiempoRespuesta"] + 1
-            if int(concurrencia[visitaIndex]["tiempoVisita"]) <= 0:
-                mediaTiempoRespuestaData[0] = mediaTiempoRespuestaData[0] + int(concurrencia[visitaIndex]["tiempoRespuesta"])
-                mediaTiempoRespuestaData[1] = mediaTiempoRespuestaData[1] + 1
-
-                
-                vf = vf + 1
-                concurrencia.pop(visitaIndex)
-
-
-                if len(cola) > 0 and len(concurrencia) < int(limiteConcurrencia.get()):
-                    concurrencia.append(cola[0])
-                    cola.pop(0)
-                    if len(cola2) > 0 and len(cola) < int(limiteCola.get()):
-                        #cola.append(cola2[0])
-                        cola2.pop(0) 
-                else:
-                    offset = offset + 1
-            else:
-                concurrencia[visitaIndex]["tiempoVisita"] = concurrencia[visitaIndex]["tiempoVisita"] - 1
-        
-        visitasFinalizadas.append(vf) 
-
-        if mediaTiempoRespuestaData[1] != 0:
-            tiempoRespuesta.append(mediaTiempoRespuestaData[0]/mediaTiempoRespuestaData[1])
+    stepsTime = []
+    stepsTotalTime = 0
+    for step in range(stepCount):
+        stepsTotalTime = stepsTotalTime + round(int(duracionPrueba.get())/stepCount)
+        stepsTime.append(round(int(duracionPrueba.get())/stepCount))
+     
+    while stepsTotalTime != int(duracionPrueba.get()):
+        if stepsTotalTime > int(duracionPrueba.get()):
+            stepsTime[-1] = stepsTime[-1] - 1
+            stepsTotalTime = stepsTotalTime -1
         else:
-            if len(tiempoRespuesta) != 0:
-                tiempoRespuesta.append(tiempoRespuesta[-1])
+            stepsTime[-1] = stepsTime[-1] + 1
+            stepsTotalTime = stepsTotalTime +1
+
+    tiempoTotal = 0
+    for stepIndex in range(stepCount):
+     
+        segundo = 0
+        size = random.poisson(lam=int(steps[stepIndex]), size=1)
+        while size < 0:
+            size = random.poisson(lam=int(steps[stepIndex]), size=1)
+        while segundo < stepsTime[stepIndex] or (segundo >= stepsTime[stepIndex] and (cola != [] or concurrencia != [])):
+
+            if segundo <  stepsTime[stepIndex]:
+
+                size = random.poisson(lam=int(steps[stepIndex]), size=1)
+                while size < 0:
+                    size = random.poisson(lam=int(steps[stepIndex]), size=1)
+                poissonData.append(size[0])
+                for visita in range(size[0]):
+                    tiempoVisita = np.random.normal( mu, dev, 1)
+                    tiempoVisita = truncate(tiempoVisita[0])
+                    dictConcurrencia = {
+                        "tiempoVisita": tiempoVisita,
+                        "tiempoRespuesta": 0 #Esto incluye los tiempos de espera
+                    }
+                    if len(concurrencia) < int(limiteConcurrencia.get()):
+                        concurrencia.append(dictConcurrencia)
+                    else:
+                        if(len(cola) >= int(limiteCola.get())):
+                            cola2.append(dictConcurrencia)
+                        else:
+                            cola.append(dictConcurrencia)
+
+            concurrenciaTotal.append(len(concurrencia))
+            colaTotal.append(len(cola))
+            cola2Total.append(len(cola2))
+
+            mediaTiempoRespuestaData = [0, 0]
+
+
+            for colaIndex in range(0, len(cola)):
+                cola[colaIndex]["tiempoRespuesta"] = cola[colaIndex]["tiempoRespuesta"] + 1
+
+            for cola2Index in range(0, len(cola2)):
+                cola2[cola2Index]["tiempoRespuesta"] = cola2[cola2Index]["tiempoRespuesta"] + 1
+
+
+            offset = 0
+            vf = 0
+            for visitaIndex in range(0, len(concurrencia)):
+                visitaIndex = visitaIndex - offset
+                concurrencia[visitaIndex]["tiempoRespuesta"] = concurrencia[visitaIndex]["tiempoRespuesta"] + 1
+                if int(concurrencia[visitaIndex]["tiempoVisita"]) <= 0:
+                    mediaTiempoRespuestaData[0] = mediaTiempoRespuestaData[0] + int(concurrencia[visitaIndex]["tiempoRespuesta"])
+                    mediaTiempoRespuestaData[1] = mediaTiempoRespuestaData[1] + 1
+
+                    
+                    vf = vf + 1
+                    concurrencia.pop(visitaIndex)
+
+
+                    if len(cola) > 0 and len(concurrencia) < int(limiteConcurrencia.get()):
+                        concurrencia.append(cola[0])
+                        cola.pop(0)
+                        if len(cola2) > 0 and len(cola) < int(limiteCola.get()):
+                            #cola.append(cola2[0])
+                            cola2.pop(0) 
+                    else:
+                        offset = offset + 1
+                else:
+                    concurrencia[visitaIndex]["tiempoVisita"] = concurrencia[visitaIndex]["tiempoVisita"] - 1
+            
+            visitasFinalizadas.append(vf) 
+
+            if mediaTiempoRespuestaData[1] != 0:
+                tiempoRespuesta.append(mediaTiempoRespuestaData[0]/mediaTiempoRespuestaData[1])
             else:
-                tiempoRespuesta.append(0)
-        
-        segundo = segundo + 1
+                if len(tiempoRespuesta) != 0:
+                    tiempoRespuesta.append(tiempoRespuesta[-1])
+                else:
+                    tiempoRespuesta.append(0)
+            
+            segundo = segundo + 1
+        tiempoTotal = tiempoTotal + segundo
     
     if len(poissonData) > 0:
         arriveX = greatestInt(poissonData)
@@ -283,7 +313,7 @@ def plotConcurrencia():
             arriveY[item] = (float(arriveY[item])/float(len(poissonData)))
 
 
-    return range(segundo), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta, range(arriveX + 1), arriveY, poissonData, visitasFinalizadas
+    return range(tiempoTotal), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta, range(arriveX + 1), arriveY, poissonData, visitasFinalizadas
 
 
 def rendimiento(tiempo, llegadas, finalizadas):
@@ -312,8 +342,8 @@ def rendimiento(tiempo, llegadas, finalizadas):
 
 
 def plot():
-    datosV = plotVisita()
     tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas, poissonData, visitasFinalizadas = plotConcurrencia()
+
 
     tiempoRespuesta2 = []
     for item in tiempoRespuesta:
