@@ -15,13 +15,16 @@ def greatestInt(array):
     return greatest        
 
 def plotConcurrencia(isBase, meanVisitas, devVisitas, meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, meanLlegadas5, meanLlegadas6, meanLlegadas7, 
-duracionPrueba, limiteConcurrencia, limiteCola):
+duracionPrueba, limiteConcurrencia, limiteCola, bloque):
 
-    if isBase:
+    if isBase == True:
         
         concurrencia = []
         cola = []
         cola2 = []
+        concurrenciaCantidadTotal = []
+        colaCantidadTotal = []
+        cola2CantidadTotal = []
         concurrenciaTotal = []
         colaTotal = []
         cola2Total = []
@@ -55,14 +58,16 @@ duracionPrueba, limiteConcurrencia, limiteCola):
 
         tiempoTotal = 0
         for stepIndex in range(stepCount):
-        
             segundo = 0
             size = random.poisson(lam=int(steps[stepIndex]), size=1)
             while size < 0:
                 size = random.poisson(lam=int(steps[stepIndex]), size=1)
             while segundo < stepsTime[stepIndex] or (stepIndex == stepCount-1 and segundo >= stepsTime[stepIndex] and (cola != [] or concurrencia != [])):
+                
+                concurrenciaSegundo = []
 
                 if segundo <  stepsTime[stepIndex]:
+                    visitas = []
                     size = random.poisson(lam=int(steps[stepIndex]), size=1)
                     while size < 0:
                         size = random.poisson(lam=int(steps[stepIndex]), size=1)
@@ -72,42 +77,46 @@ duracionPrueba, limiteConcurrencia, limiteCola):
                         tiempoVisita = truncate(tiempoVisita[0])
                         dictConcurrencia = {
                             "tiempoVisita": tiempoVisita,
-                            "tiempoRespuesta": 0 #Esto incluye los tiempos de espera
+                            "tiempoRespuestaA": 0 #Esto incluye los tiempos de espera
                         }
                         if len(concurrencia) < int(limiteConcurrencia.get()):
                             concurrencia.append(dictConcurrencia)
                         else:
-                            if(len(cola) >= int(limiteCola.get())):
-                                cola2.append(dictConcurrencia)
-                            else:
+                            if(len(cola) <= int(limiteCola.get())):
                                 cola.append(dictConcurrencia)
+                            else:
+                                cola2.append(dictConcurrencia)
                 
 
-                concurrenciaTotal.append(len(concurrencia))
-                colaTotal.append(len(cola))
-                cola2Total.append(len(cola2))
+                concurrenciaCantidadTotal.append(len(concurrencia))
+                colaCantidadTotal.append(len(cola))
+                cola2CantidadTotal.append(len(cola2))
+
+                concurrenciaTotal.append(concurrencia)
+                colaTotal.append(cola)
+                cola2Total.append(cola2)
 
                 mediaTiempoRespuestaData = [0, 0]
 
 
                 for colaIndex in range(0, len(cola)):
-                    cola[colaIndex]["tiempoRespuesta"] = cola[colaIndex]["tiempoRespuesta"] + 1
+                    cola[colaIndex]["tiempoRespuestaA"] = cola[colaIndex]["tiempoRespuestaA"] + 1
 
                 # for cola2Index in range(0, len(cola2)):
                 #     cola2[cola2Index]["tiempoRespuesta"] = cola2[cola2Index]["tiempoRespuesta"] + 1
 
 
                 offset = 0
-                vf = []
+                
                 for visitaIndex in range(0, len(concurrencia)):
                     visitaIndex = visitaIndex - offset
-                    concurrencia[visitaIndex]["tiempoRespuesta"] = concurrencia[visitaIndex]["tiempoRespuesta"] + 1
+                    concurrencia[visitaIndex]["tiempoRespuestaA"] = concurrencia[visitaIndex]["tiempoRespuestaA"] + 1
                     if int(concurrencia[visitaIndex]["tiempoVisita"]) <= 0:
-                        mediaTiempoRespuestaData[0] = mediaTiempoRespuestaData[0] + int(concurrencia[visitaIndex]["tiempoRespuesta"])
+                        mediaTiempoRespuestaData[0] = mediaTiempoRespuestaData[0] + int(concurrencia[visitaIndex]["tiempoRespuestaA"])
                         mediaTiempoRespuestaData[1] = mediaTiempoRespuestaData[1] + 1
 
-                        
-                        vf.append({'TiempoRespuestaA' : 0})
+                        concurrencia[visitaIndex].pop('tiempoVisita', None)
+                        concurrenciaSegundo.append(concurrencia[visitaIndex])
                         concurrencia.pop(visitaIndex)
 
 
@@ -122,7 +131,7 @@ duracionPrueba, limiteConcurrencia, limiteCola):
                     else:
                         concurrencia[visitaIndex]["tiempoVisita"] = concurrencia[visitaIndex]["tiempoVisita"] - 1
                 
-                visitasFinalizadas.append(vf) 
+                
 
                 if mediaTiempoRespuestaData[1] != 0:
                     tiempoRespuesta.append(mediaTiempoRespuestaData[0]/mediaTiempoRespuestaData[1])
@@ -131,7 +140,8 @@ duracionPrueba, limiteConcurrencia, limiteCola):
                         tiempoRespuesta.append(tiempoRespuesta[-1])
                     else:
                         tiempoRespuesta.append(int(meanVisitas.get()))
-                
+
+                visitasFinalizadas.append(concurrenciaSegundo) 
                 segundo = segundo + 1
             tiempoTotal = tiempoTotal + segundo
         
@@ -146,12 +156,15 @@ duracionPrueba, limiteConcurrencia, limiteCola):
                 arriveY[item] = (float(arriveY[item])/float(len(poissonData)))
 
 
-        return range(tiempoTotal), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta, range(arriveX + 1), arriveY, poissonData, visitasFinalizadas
+        return range(tiempoTotal), concurrenciaCantidadTotal, colaCantidadTotal, cola2CantidadTotal, tiempoRespuesta, range(arriveX + 1), arriveY, poissonData, visitasFinalizadas
     
     else:
         concurrencia = []
         cola = []
         cola2 = []
+        concurrenciaCantidadTotal = []
+        colaCantidadTotal = []
+        cola2CantidadTotal = []
         concurrenciaTotal = []
         colaTotal = []
         cola2Total = []
@@ -167,50 +180,48 @@ duracionPrueba, limiteConcurrencia, limiteCola):
         
         segundo = 0
         while segundo < len(llegadas) or cola != [] or concurrencia != []:
+            concurrenciaSegundo = []
 
             if segundo <  len(llegadas):
-                poissonData.append(llegadas[segundo])
-                for visita in range(llegadas[segundo]):
+                poissonData.append(len(llegadas[segundo]))
+                for visita in range(len(llegadas[segundo])):
                     tiempoVisita = np.random.normal( mu, dev, 1)
                     tiempoVisita = truncate(tiempoVisita[0])
-                    dictConcurrencia = {
-                        "tiempoVisita": tiempoVisita,
-                        "tiempoRespuesta": 0 #Esto incluye los tiempos de espera
-                    }
+                    llegadas[segundo][visita]['tiempoVisita'] = tiempoVisita
+                    llegadas[segundo][visita]['tiempoRespuesta' + bloque ] = 0
                     if len(concurrencia) < int(limiteConcurrencia.get()):
-                        concurrencia.append(dictConcurrencia)
+                        concurrencia.append(llegadas[segundo][visita])
                     else:
                         if(len(cola) >= int(limiteCola.get())):
-                            cola2.append(dictConcurrencia)
+                            cola2.append(llegadas[segundo][visita])
                         else:
-                            cola.append(dictConcurrencia)
+                            cola.append(llegadas[segundo][visita])
             
 
-            concurrenciaTotal.append(len(concurrencia))
-            colaTotal.append(len(cola))
-            cola2Total.append(len(cola2))
+            concurrenciaCantidadTotal.append(len(concurrencia))
+            colaCantidadTotal.append(len(cola))
+            cola2CantidadTotal.append(len(cola2))
 
             mediaTiempoRespuestaData = [0, 0]
 
 
             for colaIndex in range(0, len(cola)):
-                cola[colaIndex]["tiempoRespuesta"] = cola[colaIndex]["tiempoRespuesta"] + 1
+                cola[colaIndex]['tiempoRespuesta' + bloque] = cola[colaIndex]['tiempoRespuesta' + bloque] + 1
 
             # for cola2Index in range(0, len(cola2)):
             #     cola2[cola2Index]["tiempoRespuesta"] = cola2[cola2Index]["tiempoRespuesta"] + 1
 
 
             offset = 0
-            vf = 0
             for visitaIndex in range(0, len(concurrencia)):
                 visitaIndex = visitaIndex - offset
-                concurrencia[visitaIndex]["tiempoRespuesta"] = concurrencia[visitaIndex]["tiempoRespuesta"] + 1
+                concurrencia[visitaIndex]['tiempoRespuesta' + bloque] = concurrencia[visitaIndex]['tiempoRespuesta' + bloque] + 1
                 if int(concurrencia[visitaIndex]["tiempoVisita"]) <= 0:
-                    mediaTiempoRespuestaData[0] = mediaTiempoRespuestaData[0] + int(concurrencia[visitaIndex]["tiempoRespuesta"])
+                    mediaTiempoRespuestaData[0] = mediaTiempoRespuestaData[0] + int(concurrencia[visitaIndex]['tiempoRespuesta' + bloque])
                     mediaTiempoRespuestaData[1] = mediaTiempoRespuestaData[1] + 1
 
-                    
-                    vf = vf + 1
+                    concurrencia[visitaIndex].pop('tiempoVisita', None)
+                    concurrenciaSegundo.append(concurrencia[visitaIndex])
                     concurrencia.pop(visitaIndex)
 
 
@@ -225,7 +236,6 @@ duracionPrueba, limiteConcurrencia, limiteCola):
                 else:
                     concurrencia[visitaIndex]["tiempoVisita"] = concurrencia[visitaIndex]["tiempoVisita"] - 1
             
-            visitasFinalizadas.append(vf) 
 
             if mediaTiempoRespuestaData[1] != 0:
                 tiempoRespuesta.append(mediaTiempoRespuestaData[0]/mediaTiempoRespuestaData[1])
@@ -235,6 +245,7 @@ duracionPrueba, limiteConcurrencia, limiteCola):
                 else:
                     tiempoRespuesta.append(int(meanVisitas.get()))
             
+            visitasFinalizadas.append(concurrenciaSegundo) 
             segundo = segundo + 1
         
         if len(poissonData) > 0:
@@ -248,7 +259,7 @@ duracionPrueba, limiteConcurrencia, limiteCola):
                 arriveY[item] = (float(arriveY[item])/float(len(poissonData)))
 
 
-        return range(segundo), concurrenciaTotal, colaTotal, cola2Total, tiempoRespuesta, range(arriveX + 1), arriveY, poissonData, visitasFinalizadas
+        return range(segundo), concurrenciaCantidadTotal, colaCantidadTotal, cola2CantidadTotal, tiempoRespuesta, range(arriveX + 1), arriveY, poissonData, visitasFinalizadas
 
 
 def rendimiento(tiempo, llegadas, finalizadas, rendStep):
@@ -259,7 +270,7 @@ def rendimiento(tiempo, llegadas, finalizadas, rendStep):
         if segundo == 0:
             tiempoNuevo.append(segundo)
             llegadasNuevo.append(llegadas[segundo])
-            finalizadasNuevo.append(finalizadas[segundo])
+            finalizadasNuevo.append(len(finalizadas[segundo]))
         else:
             if segundo >= len(llegadas):
                 llegadas.append(0)
@@ -268,9 +279,9 @@ def rendimiento(tiempo, llegadas, finalizadas, rendStep):
             if (segundo) % step == 0:
                 tiempoNuevo.append(segundo)
                 llegadasNuevo.append(llegadas[segundo])
-                finalizadasNuevo.append(finalizadas[segundo])
+                finalizadasNuevo.append(len(finalizadas[segundo]))
             else:
                 llegadasNuevo[-1] = llegadasNuevo[-1] + llegadas[segundo] 
-                finalizadasNuevo[-1] = finalizadasNuevo[-1] + finalizadas[segundo] 
+                finalizadasNuevo[-1] = finalizadasNuevo[-1] + len(finalizadas[segundo])
     
     return tiempoNuevo, llegadasNuevo, finalizadasNuevo

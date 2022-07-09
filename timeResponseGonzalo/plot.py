@@ -2,8 +2,7 @@ import bloqueSimple
 import matplotlib.pyplot as plt
 
 def plotBase(duracionPrueba, rendStep, meanVisitas, devVisitas, meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, meanLlegadas5, meanLlegadas6, meanLlegadas7, limiteConcurrencia, limiteCola):
-    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas, poissonData, visitasFinalizadas = bloqueSimple.plotConcurrencia(True, meanVisitas, devVisitas, meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, meanLlegadas5, meanLlegadas6, meanLlegadas7, duracionPrueba, limiteConcurrencia, limiteCola)
-
+    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas, poissonData, visitasFinalizadas = bloqueSimple.plotConcurrencia(True, meanVisitas, devVisitas, meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, meanLlegadas5, meanLlegadas6, meanLlegadas7, duracionPrueba, limiteConcurrencia, limiteCola, '')
 
     fig, (axs1, axs2, axs3) = plt.subplots(3,2)
     fig.canvas.set_window_title('Bloque A')
@@ -43,7 +42,7 @@ def plotBase(duracionPrueba, rendStep, meanVisitas, devVisitas, meanLlegadas1, m
     return visitasFinalizadas
 
 def plot(duracionPrueba, rendStep, meanVisitas, devVisitas, llegadas, limiteConcurrencia, limiteCola, bloque):
-    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas, poissonData, visitasFinalizadas = bloqueSimple.plotConcurrencia(False, meanVisitas, devVisitas, llegadas, 0, 0, 0, 0, 0, 0, duracionPrueba, limiteConcurrencia, limiteCola)
+    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas, poissonData, visitasFinalizadas = bloqueSimple.plotConcurrencia(False, meanVisitas, devVisitas, llegadas, 0, 0, 0, 0, 0, 0, duracionPrueba, limiteConcurrencia, limiteCola, bloque)
 
 
     fig, (axs1, axs2, axs3) = plt.subplots(3,2)

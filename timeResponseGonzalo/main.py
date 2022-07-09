@@ -4,7 +4,7 @@ from tkinter import BOTTOM, CENTER, RIGHT, LEFT, TOP, ttk
 
 import numpy as np 
 
-import plot
+import bloqueSimple
 
 from numpy import pad, random
 import matplotlib.pyplot as plt
@@ -339,15 +339,7 @@ dev_entry3.focus()
 
 
 def pl():
-    finalizadas = plot.plotBase(duracionPrueba, rendStep, meanVisitas, devVisitas, meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, meanLlegadas5, meanLlegadas6, meanLlegadas7, limiteConcurrencia, limiteCola)
-    
-    for segundo in range(len(finalizadas)):
-        finalizadas[segundo] = round(finalizadas[segundo]*(int(dist1.get())/100))
-    finalizadas2 = plot.plot(len(finalizadas), rendStep2, meanVisitas2, devVisitas2, finalizadas, limiteConcurrencia2, limiteCola2, 'B')
-    
-    for segundo in range(len(finalizadas2)):
-        finalizadas2[segundo] = round(finalizadas2[segundo]*(int(dist2.get())/100))
-    plot.plot(len(finalizadas2), rendStep3, meanVisitas3, devVisitas3, finalizadas2, limiteConcurrencia3, limiteCola3, 'C')
+    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas, poissonData, visitasFinalizadas = bloqueSimple.plotConcurrencia(True, meanVisitas, devVisitas, meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, meanLlegadas5, meanLlegadas6, meanLlegadas7, duracionPrueba, limiteConcurrencia, limiteCola, '')
     
     plt.show()
 
