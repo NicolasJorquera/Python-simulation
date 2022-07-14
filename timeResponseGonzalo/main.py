@@ -4,7 +4,7 @@ from tkinter import BOTTOM, CENTER, RIGHT, LEFT, TOP, ttk
 
 import numpy as np 
 
-import bloqueSimple
+import simulacion
 
 from numpy import pad, random
 import matplotlib.pyplot as plt
@@ -339,7 +339,13 @@ dev_entry3.focus()
 
 
 def pl():
-    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas, poissonData, visitasFinalizadas = bloqueSimple.plotConcurrencia(True, meanVisitas, devVisitas, meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, meanLlegadas5, meanLlegadas6, meanLlegadas7, duracionPrueba, limiteConcurrencia, limiteCola, '')
+    bloqueAinfo = [meanVisitas.get(), devVisitas.get(), meanLlegadas1.get(), meanLlegadas2.get(), meanLlegadas3.get(), meanLlegadas4.get(), meanLlegadas5.get(), meanLlegadas6.get(), meanLlegadas7.get(), duracionPrueba.get(), limiteConcurrencia.get(), limiteCola.get()]
+    bloqueBinfo = [meanVisitas2.get(), devVisitas2.get(), 0, 0, 0, 0, 0, 0, 0, duracionPrueba.get(), limiteConcurrencia2.get(), limiteCola2.get()]
+    bloqueCinfo = [meanVisitas3.get(), devVisitas.get(), 0, 0, 0, 0, 0, 0, 0, duracionPrueba.get(), limiteConcurrencia3.get(), limiteCola3.get()]
+
+    Info = [bloqueAinfo, dist1.get(), bloqueBinfo, dist2.get(), bloqueCinfo]
+    
+    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas, poissonData, visitasFinalizadas = simulacion.simulacion(Info)
     
     plt.show()
 
