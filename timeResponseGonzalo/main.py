@@ -10,6 +10,11 @@ from numpy import pad, random
 import matplotlib.pyplot as plt
 
 
+import matplotlib
+#matplotlib.use( 'QtAgg' )
+from  matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
+
 # root window
 root = tk.Tk()
 root.geometry("850x500")
@@ -18,6 +23,7 @@ root.title('Simulador distribucion')
 
 plot1 = ttk.Frame(root)
 plot1.pack(padx=10, pady=10, fill='x', side=RIGHT)
+
 
 
 inputs = ttk.Frame(root)
@@ -345,8 +351,7 @@ def pl():
 
     Info = [bloqueAinfo, dist1.get(), bloqueBinfo, dist2.get(), bloqueCinfo]
     
-    tiempoC, concurrencia, cola, cola2, tiempoRespuesta, visitas, frecVisitas, poissonData, visitasFinalizadas = simulacion.simulacion(Info)
-    
+    simulacion.simulacion(Info)
     plt.show()
 
 

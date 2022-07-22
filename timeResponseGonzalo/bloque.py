@@ -28,28 +28,38 @@ def ColaToConcurrencia(concurrencia, cola, limiteConcurrencia, visitasGlobales, 
     return concurrencia, cola, visitasGlobales
     
 
-def bloqueSimulacion(isBase, letraBloque, letraBloqueAnterior, meanVisitas, devVisitas, meanLlegadas, limiteConcurrencia, limiteCola, visitasGlobales):
+def bloqueSimulacion(isBase, letraBloque, letraBloqueAnterior, meanVisitas, devVisitas, meanLlegadas, limiteConcurrencia, limiteCola, visitasGlobales, llegadas):
 
     concurrencia, cola = findConcurrenciaCola(visitasGlobales, letraBloque)
     concurrencia, cola, visitasGlobales = ColaToConcurrencia(concurrencia, cola, limiteConcurrencia, visitasGlobales, letraBloque)
     
     mu = int(meanVisitas)
     dev = int(devVisitas)
-        
+
+
 
     if isBase:
       
         
-
-        visitas = random.poisson(lam=int(meanLlegadas), size=1)
-        visitas = visitas[0]
+        if meanLlegadas == 0:
+            visitas = 0
+        else:
+            visitas = random.poisson(lam=int(meanLlegadas), size=1)
+            visitas = visitas[0]
+            llegadas[letraBloque].append(visitas)
         for visita in range(visitas):
             tiempoVisita = np.random.normal(mu, dev, 1)
             tiempoVisita = truncate(tiempoVisita[0])
+            while tiempoVisita < 0:
+                tiempoVisita = np.random.normal(mu, dev, 1)
+                tiempoVisita = truncate(tiempoVisita[0])
+                
             visita = {
                 "estado "+letraBloque: "Creado en A",
-                "tiempoVisitaRestante " +letraBloque: tiempoVisita,
-                "tiempoRespuesta " +letraBloque: 0 #Esto incluye los tiempos de espera
+                "tiempoVisitaRestante " +letraBloque: tiempoVisita + 1,
+                "tiempoEjecucion " +letraBloque: -1,
+                "tiempoCola " +letraBloque: 0,
+                "tiempoRespuesta " +letraBloque: -1 #Esto incluye los tiempos de espera
             }
 
             concurrencia, cola = findConcurrenciaCola(visitasGlobales, letraBloque)
@@ -62,31 +72,35 @@ def bloqueSimulacion(isBase, letraBloque, letraBloqueAnterior, meanVisitas, devV
                     visita["estado " +letraBloque] = "Cola"
                     visitasGlobales.append(visita)
                 else:
-                    visita["estado " +letraBloque] = "Al agua"
+                    visita["estado " +letraBloque] = "Error"
                     visitasGlobales.append(visita)
     else:
         #escribir si las llegadas vienen de otro bloque
+        llegadas[letraBloque].append(0)
         for visita in visitasGlobales:
+            
             if visita.get("estado "+letraBloqueAnterior) != None:
                 if visita["estado "+ letraBloqueAnterior] == "Concurrencia, bloque finalizado":
                     if visita.get("estado "+letraBloque) == None:
+                        llegadas[letraBloque][-1] =+ 1
                         visita["estado "+ letraBloque] = "Creado en " + letraBloque
 
                         tiempoVisita = np.random.normal(mu, dev, 1)
                         tiempoVisita = truncate(tiempoVisita[0])
-                        visita["tiempoVisitaRestante " +letraBloque] = tiempoVisita
+                        visita["tiempoVisitaRestante " +letraBloque] = tiempoVisita + 1
+                        visita["tiempoEjecucion " +letraBloque] = -1
+                        visita["tiempoCola " +letraBloque] = 0
+                        visita["tiempoRespuesta " +letraBloque] = -1
 
-                        visita["tiempoRespuesta " +letraBloque] = 0
-
-                    concurrencia, cola = findConcurrenciaCola(visitasGlobales, letraBloque)
+                        concurrencia, cola = findConcurrenciaCola(visitasGlobales, letraBloque)
                     
-                    if concurrencia < int(limiteConcurrencia):
-                        visita["estado " + letraBloque] = "Concurrencia"
-                    else:
-                        if cola < int(limiteCola):
-                            visita["estado " +letraBloque] = "Cola"
+                        if concurrencia < int(limiteConcurrencia):
+                            visita["estado " + letraBloque] = "Concurrencia"
                         else:
-                            visita["estado " +letraBloque] = "Al agua"
+                            if cola < int(limiteCola):
+                                visita["estado " +letraBloque] = "Cola"
+                            else:
+                                visita["estado " +letraBloque] = "Error"
         
     
 
@@ -97,14 +111,16 @@ def bloqueSimulacion(isBase, letraBloque, letraBloqueAnterior, meanVisitas, devV
             if visita["tiempoVisitaRestante " + letraBloque] <= 0:
                 visita["estado "+ letraBloque] = "Concurrencia, bloque finalizado"
 
-        
-        
+            ##solo para los de concurrencia
+            if visita["estado "+letraBloque] == "Concurrencia, bloque finalizado" or visita["estado "+letraBloque] == "Concurrencia":
+                visita["tiempoVisitaRestante " + letraBloque] = visita["tiempoVisitaRestante " + letraBloque] - 1
+                visita["tiempoEjecucion " + letraBloque] = visita["tiempoEjecucion " + letraBloque] + 1
 
-
-
-            visita["tiempoVisitaRestante " + letraBloque] = visita["tiempoVisitaRestante " + letraBloque] - 1
+            if visita["estado "+letraBloque] == "Cola":
+                visita["tiempoCola " + letraBloque] = visita["tiempoCola " + letraBloque] + 1
+            
             visita["tiempoRespuesta "+ letraBloque] = visita["tiempoRespuesta " + letraBloque] + 1
 
-    return visitasGlobales
+
 
     
