@@ -345,9 +345,9 @@ dev_entry3.focus()
 
 
 def pl():
-    bloqueAinfo = [meanVisitas.get(), devVisitas.get(), meanLlegadas1.get(), meanLlegadas2.get(), meanLlegadas3.get(), meanLlegadas4.get(), meanLlegadas5.get(), meanLlegadas6.get(), meanLlegadas7.get(), duracionPrueba.get(), limiteConcurrencia.get(), limiteCola.get()]
-    bloqueBinfo = [meanVisitas2.get(), devVisitas2.get(), 0, 0, 0, 0, 0, 0, 0, duracionPrueba.get(), limiteConcurrencia2.get(), limiteCola2.get()]
-    bloqueCinfo = [meanVisitas3.get(), devVisitas.get(), 0, 0, 0, 0, 0, 0, 0, duracionPrueba.get(), limiteConcurrencia3.get(), limiteCola3.get()]
+    bloqueAinfo = [meanVisitas.get(), devVisitas.get(), meanLlegadas1.get(), meanLlegadas2.get(), meanLlegadas3.get(), meanLlegadas4.get(), meanLlegadas5.get(), meanLlegadas6.get(), meanLlegadas7.get(), duracionPrueba.get(), limiteConcurrencia.get(), limiteCola.get(), rendStep.get()]
+    bloqueBinfo = [meanVisitas2.get(), devVisitas2.get(), 0, 0, 0, 0, 0, 0, 0, duracionPrueba.get(), limiteConcurrencia2.get(), limiteCola2.get(), rendStep2.get()]
+    bloqueCinfo = [meanVisitas3.get(), devVisitas.get(), 0, 0, 0, 0, 0, 0, 0, duracionPrueba.get(), limiteConcurrencia3.get(), limiteCola3.get(), rendStep3.get()]
 
     Info = [bloqueAinfo, dist1.get(), bloqueBinfo, dist2.get(), bloqueCinfo]
     

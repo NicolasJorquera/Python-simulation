@@ -41,7 +41,7 @@ def arrivalSteps(meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, mea
     
     return stepCount, stepsTime, steps
 
-def checkFinish(visitas, errores, erroresA, erroresB, erroresC, concurrenciaA, concurrenciaB, concurrenciaC, colaA, colaB, colaC, visitasFinalizadas, tiempoRespuesta):
+def checkFinish(visitas,concurrenciaA, concurrenciaB, concurrenciaC, colaA, colaB, colaC, erroresA, erroresB, erroresC, filtradosA, filtradosB, filtradosC, visitasFinalizadas, tiempoRespuesta):
     offset = 0
     tiempoRespuestaSuma = {"A":0, "B":0, "C":0}
     tiempoRespuestaCant = 0
@@ -49,8 +49,12 @@ def checkFinish(visitas, errores, erroresA, erroresB, erroresC, concurrenciaA, c
         visitaIndex = visitaIndex - offset
         if visitas[visitaIndex].get("estado A") != None:
             if visitas[visitaIndex]["estado A"] == "Error":
-                errores.append(visitas[visitaIndex])
                 erroresA[-1] = erroresA[-1] + 1
+                visitas.pop(visitaIndex)
+                offset = offset + 1
+                continue
+            elif visitas[visitaIndex]["estado A"] == "Filtrado":
+                filtradosA[-1] = filtradosA[-1] + 1
                 visitas.pop(visitaIndex)
                 offset = offset + 1
                 continue
@@ -61,9 +65,13 @@ def checkFinish(visitas, errores, erroresA, erroresB, erroresC, concurrenciaA, c
 
         if visitas[visitaIndex].get("estado B") != None:
             if visitas[visitaIndex]["estado B"] == "Error":
-                errores.append(visitas[visitaIndex])
                 erroresA[-1] = erroresA[-1] + 1
                 erroresB[-1] = erroresB[-1] + 1
+                visitas.pop(visitaIndex)
+                offset = offset + 1
+                continue
+            elif visitas[visitaIndex]["estado B"] == "Filtrado":
+                filtradosB[-1] = filtradosB[-1] + 1
                 visitas.pop(visitaIndex)
                 offset = offset + 1
                 continue
@@ -74,14 +82,17 @@ def checkFinish(visitas, errores, erroresA, erroresB, erroresC, concurrenciaA, c
         
         if visitas[visitaIndex].get("estado C") != None:
             if visitas[visitaIndex]["estado C"] == "Error":
-                errores.append(visitas[visitaIndex])
                 erroresA[-1] = erroresA[-1] + 1
                 erroresB[-1] = erroresB[-1] + 1
                 erroresC[-1] = erroresC[-1] + 1
                 visitas.pop(visitaIndex)
                 offset = offset + 1
                 continue
-
+            elif visitas[visitaIndex]["estado C"] == "Filtrado":
+                filtradosC[-1] = filtradosC[-1] + 1
+                visitas.pop(visitaIndex)
+                offset = offset + 1
+                continue
             elif visitas[visitaIndex]["estado C"] == "Concurrencia, bloque finalizado" or  visitas[visitaIndex]["estado C"] == "Concurrencia":
                 concurrenciaC[-1] = concurrenciaC[-1] + 1
             elif visitas[visitaIndex]["estado C"] == "Cola":
@@ -110,10 +121,11 @@ def checkFinish(visitas, errores, erroresA, erroresB, erroresC, concurrenciaA, c
         tiempoRespuesta["B"].append(0)
         tiempoRespuesta["C"].append(0)
 
-def plotSetUp(duracionPrueba, tiempoTotal, visitasFinalizadas, bloques, tiempoRespuesta, concurrencias, colas, errores, llegadas, arriveX, arriveY):
+def plotSetUp(duracionPrueba, tiempoTotal, finalizadas, bloques, tiempoRespuesta, concurrencias, colas, errores, filtrados, llegadas, arriveX, arriveY, rendSteps):
     
     for letraBloqueIndex in range(len(bloques)):
-        plot.plot(duracionPrueba, tiempoTotal,visitasFinalizadas, bloques[letraBloqueIndex], tiempoRespuesta[bloques[letraBloqueIndex]], concurrencias[letraBloqueIndex], colas[letraBloqueIndex], errores[letraBloqueIndex], llegadas[bloques[letraBloqueIndex]], range(arriveX[bloques[letraBloqueIndex]]  + 1), arriveY[bloques[letraBloqueIndex]] )
+        plot.plot(duracionPrueba, tiempoTotal,finalizadas[bloques[letraBloqueIndex]], bloques[letraBloqueIndex], tiempoRespuesta[bloques[letraBloqueIndex]], concurrencias[letraBloqueIndex], 
+        colas[letraBloqueIndex], errores[letraBloqueIndex], filtrados[letraBloqueIndex], llegadas[bloques[letraBloqueIndex]], range(arriveX[bloques[letraBloqueIndex]]  + 1), arriveY[bloques[letraBloqueIndex]], rendSteps[letraBloqueIndex] )
         
     
 def poissonDataArrange(llegadas, arriveX, arriveY):
@@ -131,33 +143,38 @@ def poissonDataArrange(llegadas, arriveX, arriveY):
 
 
 def simulacion(info):
-    meanVisitas1, devVisitas1, meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, meanLlegadas5, meanLlegadas6, meanLlegadas7, duracionPrueba, limiteConcurrencia1, limiteCola1 = info[0]
+    meanVisitas1, devVisitas1, meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, meanLlegadas5, meanLlegadas6, meanLlegadas7, duracionPrueba, limiteConcurrencia1, limiteCola1, rendStep1 = info[0]
     dist1 = int(info[1])
-    meanVisitas2, devVisitas2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, limiteConcurrencia2, limiteCola2 = info[2]
+    meanVisitas2, devVisitas2, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, limiteConcurrencia2, limiteCola2, rendStep2 = info[2]
     dist2 = int(info[3])
-    meanVisitas3, devVisitas3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, limiteConcurrencia3, limiteCola3 = info[4]
+    meanVisitas3, devVisitas3, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, limiteConcurrencia3, limiteCola3, rendStep3 = info[4]
 
     concurrenciaA = [0]
     colaA = [0]
     erroresA = [0]
+    filtradosA = [0]
 
     concurrenciaB = [0]
     colaB = [0]
     erroresB = [0]
+    filtradosB = [0]
 
     concurrenciaC = [0]
     colaC = [0]
     erroresC = [0]
+    filtradosC = [0]
 
     visitas = []
     visitasFinalizadas = []
     errores = []
+    filtrados = []
 
     tiempoRespuesta = {"A": [], "B":[], "C":[]}
 
     llegadas = {"A": [], "B":[], "C":[]}
     arriveX = {"A": 0, "B": 0, "C":0}
     arriveY = {"A": [], "B":[], "C":[]}
+    finalizadas = {"A": [], "B":[], "C":[]}
 
     stepCount, stepsTime, steps = arrivalSteps(meanLlegadas1, meanLlegadas2, meanLlegadas3, meanLlegadas4, meanLlegadas5, meanLlegadas6, meanLlegadas7, duracionPrueba)
 
@@ -168,14 +185,14 @@ def simulacion(info):
         while tiempoStep < stepsTime[stepIndex]:
             print(segundo)
             
-            bloque.bloqueSimulacion(True, "A", NULL, meanVisitas1, devVisitas1, steps[stepIndex], limiteConcurrencia1, limiteCola1, visitas, llegadas)
+            bloque.bloqueSimulacion(True, "A", NULL, meanVisitas1, devVisitas1, steps[stepIndex], limiteConcurrencia1, limiteCola1, visitas, llegadas, finalizadas, NULL)
+
+            bloque.bloqueSimulacion(False, "B", "A", meanVisitas2, devVisitas2, steps[stepIndex], limiteConcurrencia2, limiteCola2, visitas, llegadas, finalizadas, dist1)
         
-            bloque.bloqueSimulacion(False, "B", "A", meanVisitas2, devVisitas2, steps[stepIndex], limiteConcurrencia2, limiteCola2, visitas, llegadas)
-        
-            bloque.bloqueSimulacion(False, "C", "B", meanVisitas3, devVisitas3, steps[stepIndex], limiteConcurrencia3, limiteCola3, visitas, llegadas)
+            bloque.bloqueSimulacion(False, "C", "B", meanVisitas3, devVisitas3, steps[stepIndex], limiteConcurrencia3, limiteCola3, visitas, llegadas, finalizadas, dist2)
             
             
-            checkFinish(visitas, errores, erroresA, erroresB, erroresC, concurrenciaA, concurrenciaB, concurrenciaC, colaA, colaB, colaC, visitasFinalizadas, tiempoRespuesta)
+            checkFinish(visitas, concurrenciaA, concurrenciaB, concurrenciaC, colaA, colaB, colaC, erroresA, erroresB, erroresC, filtradosA, filtradosB, filtradosC, visitasFinalizadas, tiempoRespuesta)
 
             
 
@@ -190,19 +207,22 @@ def simulacion(info):
             erroresA.append(0)
             erroresB.append(0)
             erroresC.append(0)
+            filtradosA.append(0)
+            filtradosB.append(0)
+            filtradosC.append(0)
 
     ##print(visitas, visitasFinalizadas)
 
     while len(visitas) > 0:
         print(segundo)
 
-        bloque.bloqueSimulacion(True, "A", NULL, meanVisitas1, devVisitas1, 0, limiteConcurrencia1, limiteCola1, visitas, llegadas)
+        bloque.bloqueSimulacion(True, "A", NULL, meanVisitas1, devVisitas1, 0, limiteConcurrencia1, limiteCola1, visitas, llegadas, finalizadas, NULL)
         
-        bloque.bloqueSimulacion(False, "B", "A", meanVisitas2, devVisitas2, steps[stepIndex], limiteConcurrencia2, limiteCola2, visitas, llegadas)
+        bloque.bloqueSimulacion(False, "B", "A", meanVisitas2, devVisitas2, steps[stepIndex], limiteConcurrencia2, limiteCola2, visitas, llegadas, finalizadas, dist1)
         
-        bloque.bloqueSimulacion(False, "C", "B", meanVisitas3, devVisitas3, steps[stepIndex], limiteConcurrencia3, limiteCola3, visitas, llegadas)
+        bloque.bloqueSimulacion(False, "C", "B", meanVisitas3, devVisitas3, steps[stepIndex], limiteConcurrencia3, limiteCola3, visitas, llegadas, finalizadas, dist2)
         
-        checkFinish(visitas, errores, erroresA, erroresB, erroresC, concurrenciaA, concurrenciaB, concurrenciaC, colaA, colaB, colaC, visitasFinalizadas, tiempoRespuesta)
+        checkFinish(visitas, concurrenciaA, concurrenciaB, concurrenciaC, colaA, colaB, colaC, erroresA, erroresB, erroresC, filtradosA, filtradosB, filtradosC, visitasFinalizadas, tiempoRespuesta)
 
 
         segundo = segundo + 1
@@ -216,13 +236,18 @@ def simulacion(info):
             erroresA.append(0)
             erroresB.append(0)
             erroresC.append(0)
+            filtradosA.append(0)
+            filtradosB.append(0)
+            filtradosC.append(0)
     #print(visitas, visitasFinalizadas)
     
     concurrencias = [concurrenciaA, concurrenciaB, concurrenciaC]
     colas = [colaA, colaB, colaC]
     errores = [erroresA, erroresB, erroresC]
+    filtrados = [filtradosA, filtradosB, filtradosC]
+    rendSteps = [rendStep1, rendStep2, rendStep3]
     poissonDataArrange(llegadas, arriveX, arriveY)
-    plotSetUp(duracionPrueba, segundo, visitasFinalizadas, ["A", "B", "C"], tiempoRespuesta, concurrencias, colas, errores, llegadas, arriveX, arriveY)
+    plotSetUp(duracionPrueba, segundo, finalizadas, ["A", "B", "C"], tiempoRespuesta, concurrencias, colas, errores, filtrados, llegadas, arriveX, arriveY, rendSteps)
     
 
 
@@ -236,7 +261,7 @@ def rendimiento(tiempo, llegadas, finalizadas, rendStep):
         if segundo == 0:
             tiempoNuevo.append(segundo)
             llegadasNuevo.append(llegadas[segundo])
-            finalizadasNuevo.append(len(finalizadas[segundo]))
+            finalizadasNuevo.append(finalizadas[segundo])
         else:
 
             step = int(rendStep)*60
@@ -246,12 +271,12 @@ def rendimiento(tiempo, llegadas, finalizadas, rendStep):
                     llegadasNuevo.append(0)
                 else:
                     llegadasNuevo.append(llegadas[segundo])
-                finalizadasNuevo.append(len(finalizadas[segundo]))
+                finalizadasNuevo.append(finalizadas[segundo])
             else:
                 if segundo >= len(llegadas):
                     llegadasNuevo[-1] = llegadasNuevo[-1] + 0
                 else:
                     llegadasNuevo[-1] = llegadasNuevo[-1] + llegadas[segundo] 
-                finalizadasNuevo[-1] = finalizadasNuevo[-1] + len(finalizadas[segundo])
+                finalizadasNuevo[-1] = finalizadasNuevo[-1] + finalizadas[segundo]
     
     return tiempoNuevo, llegadasNuevo, finalizadasNuevo
