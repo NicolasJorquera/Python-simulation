@@ -20,15 +20,18 @@ def plot(duracionPrueba, tiempoTotal, visitasFinalizadas, bloque, tiempoRespuest
     if len(tiempoRespuestaSinCeros) > 0:
 
         bins = int(max(tiempoRespuestaSinCeros)-min(tiempoRespuestaSinCeros))
-
-        axs1[0].hist(tiempoRespuestaSinCeros, bins)
+        if bins < 5 :
+            bins = 15
+        axs1[0].hist(tiempoRespuesta, bins)
+        print(sum(tiempoRespuesta)/len(tiempoRespuesta))
         axs1[0].set(xlabel='Duracion Visitas', ylabel='Visitas')
     axs1[1].plot(tiempoTotal, concurrencia)
     axs1[1].plot(tiempoTotal, cola)
     axs1[1].plot(tiempoTotal, errores)
-    axs1[1].plot(tiempoTotal, filtrados)
+    ##axs1[1].plot(tiempoTotal, filtrados)
     axs1[1].set(xlabel='Tiempo', ylabel='Concurrencia(Azul)/Cola(Naranjo)')
-    axs2[0].plot(tiempoTotal, tiempoRespuesta)
+
+    axs2[0].plot(range(len(tiempoRespuestaSinCeros)), tiempoRespuestaSinCeros)
     axs2[0].set(xlabel='Tiempo', ylabel='Tiempo de respuesta')
     axs2[1].hist(llegadas, int(round(len(visitas)*0.9, 0)), density=True)
     axs2[1].plot(visitas, frecVisitas, '--')

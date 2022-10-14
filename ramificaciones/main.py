@@ -17,7 +17,7 @@ from  matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
 # root window
 root = tk.Tk()
-root.geometry("850x500")
+root.geometry("900x750")
 root.resizable(False, False)
 root.title('Simulador distribucion')
 
@@ -60,13 +60,13 @@ duracion_entry = ttk.Entry(general, textvariable=duracionPrueba)
 duracion_entry.pack(fill='x')
 duracion_entry.focus()
 
-limConcurrencia_label = ttk.Label(general, text="Limite de concurrencia:")
+limConcurrencia_label = ttk.Label(general, text="Limite recurso ejecucion:")
 limConcurrencia_label.pack(fill='x', )
 limConcurrencia_entry = ttk.Entry(general, textvariable=limiteConcurrencia)
 limConcurrencia_entry.pack(fill='x')
 limConcurrencia_entry.focus()
 
-limCola_label = ttk.Label(general, text="Limite de cola:")
+limCola_label = ttk.Label(general, text="Limite de cola de espera:")
 limCola_label.pack(fill='x', )
 limCola_entry = ttk.Entry(general, textvariable=limiteCola)
 limCola_entry.pack(fill='x')
@@ -214,13 +214,13 @@ limiteCola2 = tk.StringVar(value="50")
 rendStep2 = tk.StringVar(value="5")
 
 
-limConcurrencia_label2 = ttk.Label(general2, text="Limite de concurrencia:")
+limConcurrencia_label2 = ttk.Label(general2, text="Limite recurso ejecucion:")
 limConcurrencia_label2.pack(fill='x', )
 limConcurrencia_entry2 = ttk.Entry(general2, textvariable=limiteConcurrencia2)
 limConcurrencia_entry2.pack(fill='x')
 limConcurrencia_entry2.focus()
 
-limCola_label2 = ttk.Label(general2, text="Limite de cola:")
+limCola_label2 = ttk.Label(general2, text="Limite de cola de espera:")
 limCola_label2.pack(fill='x', )
 limCola_entry2 = ttk.Entry(general2, textvariable=limiteCola2)
 limCola_entry2.pack(fill='x')
@@ -258,7 +258,7 @@ dev_entry2.focus()
 
 
 
- #### dist #####
+ #### dist C #####
 
 distinputs2 = ttk.Frame(root)
 distinputs2.pack(padx=10, pady=10, fill='y', side=LEFT)
@@ -268,12 +268,27 @@ distgeneral_label2.pack(fill='x', side=TOP)
 distgeneral2 = ttk.Frame(distinputs2)
 distgeneral2.pack(padx=10, pady=10, fill='x')
 
-dist2 = tk.StringVar(value="100")
+dist2 = tk.StringVar(value="80")
 distInput2 = ttk.Entry(distinputs2, textvariable=dist2)
 distInput2.pack(fill='x', )
 distInput2.focus()
 
 distInfo2 = dist2.get()
+
+
+ #### dist D #####
+
+distgeneral_label3 = ttk.Label(distinputs2, text="Porcentaje:")
+distgeneral_label3.pack(fill='x', side=TOP, pady=(300,0))
+distgeneral3 = ttk.Frame(distinputs2)
+distgeneral3.pack(padx=10, pady=10, fill='x')
+
+dist3 = tk.StringVar(value="20")
+distInput3 = ttk.Entry(distinputs2, textvariable=dist3)
+distInput3.pack(fill='x', )
+distInput3.focus()
+
+distInfo3 = dist3.get()
 
 
 
@@ -303,13 +318,13 @@ limiteCola3 = tk.StringVar(value="50")
 rendStep3 = tk.StringVar(value="5")
 
 
-limConcurrencia_label3 = ttk.Label(general3, text="Limite de concurrencia:")
+limConcurrencia_label3 = ttk.Label(general3, text="Limite recurso ejecucion:")
 limConcurrencia_label3.pack(fill='x', )
 limConcurrencia_entry3 = ttk.Entry(general3, textvariable=limiteConcurrencia3)
 limConcurrencia_entry3.pack(fill='x')
 limConcurrencia_entry3.focus()
 
-limCola_label3 = ttk.Label(general3, text="Limite de cola:")
+limCola_label3 = ttk.Label(general3, text="Limite de cola de espera:")
 limCola_label3.pack(fill='x', )
 limCola_entry3 = ttk.Entry(general3, textvariable=limiteCola3)
 limCola_entry3.pack(fill='x')
@@ -344,12 +359,75 @@ dev_entry3.focus()
 
 
 
+## Bloque D
+
+general_label4 = ttk.Label(inputs3, text="General:")
+general_label4.pack( fill='x', side=TOP, pady=(70,0))
+general4 = ttk.Frame(inputs3)
+general4.pack(padx=10, pady=10, fill='x')
+
+
+durVis_label4 = ttk.Label(inputs3, text="Duracion visitas (Normal):")
+durVis_label4.pack(fill='x', side=TOP)
+duracionVisitas4 = ttk.Frame(inputs3)
+duracionVisitas4.pack(padx=10, pady=10, fill='x')
+
+
+
+limiteConcurrencia4 = tk.StringVar(value="100")
+limiteCola4 = tk.StringVar(value="50")
+rendStep4 = tk.StringVar(value="5")
+
+
+limConcurrencia_label4 = ttk.Label(general4, text="Limite recurso ejecucion:")
+limConcurrencia_label4.pack(fill='x', )
+limConcurrencia_entry4 = ttk.Entry(general4, textvariable=limiteConcurrencia4)
+limConcurrencia_entry4.pack(fill='x')
+limConcurrencia_entry4.focus()
+
+limCola_label4 = ttk.Label(general4, text="Limite de cola de espera:")
+limCola_label4.pack(fill='x', )
+limCola_entry4 = ttk.Entry(general4, textvariable=limiteCola4)
+limCola_entry4.pack(fill='x')
+limCola_entry4.focus()
+
+rendStep_label4 = ttk.Label(general4, text="Step rendimiento (min):")
+rendStep_label4.pack(fill='x', )
+rendStep_entry4 = ttk.Entry(general4, textvariable=rendStep4)
+rendStep_entry4.pack(fill='x')
+rendStep_entry4.focus()
+
+
+meanVisitas4 = tk.StringVar(value="20")
+devVisitas4 = tk.StringVar(value="5")
+
+# mean
+mean_label4 = ttk.Label(duracionVisitas4, text="Duracion de visita:")
+mean_label4.pack(fill='x', )
+
+mean_entry4 = ttk.Entry(duracionVisitas4, textvariable=meanVisitas4)
+mean_entry4.pack(fill='x', )
+mean_entry4.focus()
+
+# dev
+dev_label4 = ttk.Label(duracionVisitas4, text="Desviación estandar:")
+dev_label4.pack(fill='x', )
+
+dev_entry4 = ttk.Entry(duracionVisitas4, textvariable=devVisitas4)
+dev_entry4.pack(fill='x', )
+dev_entry4.focus()
+
+
+
+
 def pl():
     bloqueAinfo = [meanVisitas.get(), devVisitas.get(), meanLlegadas1.get(), meanLlegadas2.get(), meanLlegadas3.get(), meanLlegadas4.get(), meanLlegadas5.get(), meanLlegadas6.get(), meanLlegadas7.get(), duracionPrueba.get(), limiteConcurrencia.get(), limiteCola.get(), rendStep.get()]
     bloqueBinfo = [meanVisitas2.get(), devVisitas2.get(), 0, 0, 0, 0, 0, 0, 0, duracionPrueba.get(), limiteConcurrencia2.get(), limiteCola2.get(), rendStep2.get()]
-    bloqueCinfo = [meanVisitas3.get(), devVisitas.get(), 0, 0, 0, 0, 0, 0, 0, duracionPrueba.get(), limiteConcurrencia3.get(), limiteCola3.get(), rendStep3.get()]
+    bloqueCinfo = [meanVisitas3.get(), devVisitas3.get(), 0, 0, 0, 0, 0, 0, 0, duracionPrueba.get(), limiteConcurrencia3.get(), limiteCola3.get(), rendStep3.get()]
+    bloqueDinfo = [meanVisitas4.get(), devVisitas4.get(), 0, 0, 0, 0, 0, 0, 0, duracionPrueba.get(), limiteConcurrencia4.get(), limiteCola4.get(), rendStep4.get()]
 
-    Info = [bloqueAinfo, dist1.get(), bloqueBinfo, dist2.get(), bloqueCinfo]
+
+    Info = [bloqueAinfo, dist1.get(), bloqueBinfo, dist2.get(), bloqueCinfo, dist3.get(), bloqueDinfo]
     
     simulacion.simulacion(Info)
     plt.show()

@@ -49,18 +49,20 @@ def bloqueSimulacion(isBase, letraBloque, letraBloqueAnterior, meanVisitas, devV
             llegadas[letraBloque].append(visitas)
         for visita in range(visitas):
             tiempoVisita = np.random.normal(mu, dev, 1)
-            tiempoVisita = truncate(tiempoVisita[0])
+            tiempoVisita = round(tiempoVisita[0])
             while tiempoVisita < 0:
                 tiempoVisita = np.random.normal(mu, dev, 1)
-                tiempoVisita = truncate(tiempoVisita[0])
+                tiempoVisita = round(tiempoVisita[0])
+
+            
                 
-            visita = {
-                "estado "+letraBloque: "Creado en A",
-                "tiempoVisitaRestante " +letraBloque: tiempoVisita + 1,
-                "tiempoEjecucion " +letraBloque: -1,
-                "tiempoCola " +letraBloque: 0,
-                "tiempoRespuesta " +letraBloque: -1 #Esto incluye los tiempos de espera
-            }
+            visita={}
+            visita["estado "+ letraBloque] = "Creado en " + letraBloque
+            visita["tiempoVisita " +letraBloque] = tiempoVisita 
+            visita["tiempoVisitaRestante " +letraBloque] = tiempoVisita
+            visita["tiempoEjecucion " +letraBloque] = -1
+            visita["tiempoCola " +letraBloque] = 0
+            visita["tiempoRespuesta " +letraBloque] = -1
 
             concurrencia, cola = findConcurrenciaCola(visitasGlobales, letraBloque)
 
@@ -86,21 +88,25 @@ def bloqueSimulacion(isBase, letraBloque, letraBloqueAnterior, meanVisitas, devV
                     if rd > dist/100:
                         if visita.get("estado "+letraBloque) == None:
                             visita["estado "+ letraBloque] = "Filtrado"
-                            visita["tiempoVisitaRestante " +letraBloque] = -1
-                            visita["tiempoEjecucion " +letraBloque] = -1
-                            visita["tiempoCola " +letraBloque] = 0
-                            visita["tiempoRespuesta " +letraBloque] = -1
+                            visita["tiempoVisitaRestante " + letraBloque] = -1
+                            visita["tiempoEjecucion " + letraBloque] = 0
+                            visita["tiempoCola " + letraBloque] = 0
+                            visita["tiempoRespuesta " + letraBloque] = 0
                     else:
                         if visita.get("estado "+letraBloque) == None:
                             visitas = visitas + 1
                             visita["estado "+ letraBloque] = "Creado en " + letraBloque
 
                             tiempoVisita = np.random.normal(mu, dev, 1)
-                            tiempoVisita = truncate(tiempoVisita[0])
-                            visita["tiempoVisitaRestante " +letraBloque] = tiempoVisita + 1
-                            visita["tiempoEjecucion " +letraBloque] = -1
-                            visita["tiempoCola " +letraBloque] = 0
-                            visita["tiempoRespuesta " +letraBloque] = -1
+                            tiempoVisita = round(tiempoVisita[0])
+                            while tiempoVisita < 0:
+                                tiempoVisita = np.random.normal(mu, dev, 1)
+                                tiempoVisita = round(tiempoVisita[0])
+                            visita["tiempoVisita " + letraBloque] = tiempoVisita 
+                            visita["tiempoVisitaRestante " + letraBloque] = tiempoVisita
+                            visita["tiempoEjecucion " + letraBloque] = -1
+                            visita["tiempoCola " + letraBloque] = 0
+                            visita["tiempoRespuesta " + letraBloque] = -1
 
                             concurrencia, cola = findConcurrenciaCola(visitasGlobales, letraBloque)
                         
@@ -127,12 +133,13 @@ def bloqueSimulacion(isBase, letraBloque, letraBloqueAnterior, meanVisitas, devV
 
 
             ##solo para los de concurrencia
-            if visita["estado "+letraBloque] == "Concurrencia, bloque finalizado" or visita["estado "+letraBloque] == "Concurrencia":
+            if visita["estado "+ letraBloque] == "Concurrencia, bloque finalizado" or visita["estado "+letraBloque] == "Concurrencia":
                 visita["tiempoVisitaRestante " + letraBloque] = visita["tiempoVisitaRestante " + letraBloque] - 1
                 visita["tiempoEjecucion " + letraBloque] = visita["tiempoEjecucion " + letraBloque] + 1
 
             if visita["estado "+letraBloque] == "Cola":
                 visita["tiempoCola " + letraBloque] = visita["tiempoCola " + letraBloque] + 1
+            
             
             visita["tiempoRespuesta "+ letraBloque] = visita["tiempoRespuesta " + letraBloque] + 1
     
